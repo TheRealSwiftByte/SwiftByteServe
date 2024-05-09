@@ -98,7 +98,7 @@ export default function signIn() {
             text={"Sign In"}
             type={"secondary"}
             onPress={function (): void {
-              email && password ? router.navigate("/dashboard") : null;
+              email && password ? router.navigate("/index") : null;
             }}
           ></Button>
 
