@@ -26,11 +26,11 @@ export default function TabLayout() {
         // Disable the static render of the header on web
         // to prevent a hydration error in React Navigation v6.
         headerShown: useClientOnlyValue(false, true),
-      }}>
+      }} initialRouteName='dashboard'>
       <Tabs.Screen
-        name="index"
+        name="dashboard"
         options={{
-          title: 'Tab One',
+          title: 'Dashboard',
           tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
           headerRight: () => (
             <Link href="/modal" asChild>
