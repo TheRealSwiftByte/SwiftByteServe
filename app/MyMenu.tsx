@@ -1,7 +1,7 @@
 import {
   StyleSheet,
   Text,
-  TouchableOpacity,
+  Pressable,
   View,
   Image,
   FlatList,
@@ -16,7 +16,7 @@ export default function MyMenu() {
 
   const renderItem = (item: MenuItem) => {
     return (
-      <TouchableOpacity
+      <Pressable
         key={item.id}
         style={[styles.dFlex, { marginBottom: 16 }]}
         onPress={() => router.navigate({
@@ -50,7 +50,7 @@ export default function MyMenu() {
             ${item.price}
           </Text>
         </View>
-      </TouchableOpacity>
+      </Pressable>
     );
   };
 

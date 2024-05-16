@@ -24,6 +24,7 @@ export interface RestaurantDetails {
   averageRating: number;
   averageWaitTime: number;
   description: string;
+  imageUrl: string;
 }
 
 export const RestaurantContext = createContext<useRestaurantReturn>({
@@ -39,6 +40,7 @@ export const RestaurantContext = createContext<useRestaurantReturn>({
     averageRating: 0,
     averageWaitTime: 0,
     description: "",
+    imageUrl: "",
   },
   editDetail: () => {},
   editMenu: () => {},

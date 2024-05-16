@@ -7,7 +7,7 @@ export interface useRestaurantReturn {
   removeFromMenu: (menuItem: MenuItem) => void;
   editMenu: (id: string, editedItem: MenuItem) => void;
   details: RestaurantDetails;
-  editDetail: (key: keyof RestaurantDetails, value: string | number) => void;
+  editDetail: (value: RestaurantDetails) => void;
 }
 
 export const useRestaurant = (): useRestaurantReturn => {
@@ -71,9 +71,10 @@ export const useRestaurant = (): useRestaurantReturn => {
     _id: "001",
     categories: [
       {
-        id: 1,
-        name: "Asian",
-        imageUrl: "",
+        id: 7,
+        name: "Thailand",
+        imageUrl:
+          "https://images.pexels.com/photos/1132047/pexels-photo-1132047.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
       },
     ],
     name: "Kinn Thai",
@@ -82,6 +83,7 @@ export const useRestaurant = (): useRestaurantReturn => {
     averageRating: 4.5,
     averageWaitTime: 48,
     description: "Famous thai restaurant in Wollongong.",
+    imageUrl: "",
   });
 
   const addToMenu = (menuItem: MenuItem) => {
@@ -92,8 +94,8 @@ export const useRestaurant = (): useRestaurantReturn => {
     setMenu(menu.filter((item) => item.id !== menuItem.id));
   };
 
-  const editDetail = (key: keyof RestaurantDetails, value: string | number) => {
-    setDetails({ ...details, [key]: value });
+  const editDetail = (value: RestaurantDetails) => {
+    setDetails((prevValue) => value);
   };
 
   const editMenu = (id: string, editedItem: MenuItem) => {

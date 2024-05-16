@@ -9,8 +9,28 @@ import {
 } from "react-native-chart-kit";
 import { Dimensions } from "react-native";
 import { SB_COLOR_SCHEME } from "@/contstants";
+import { useContext, useEffect, useState } from "react";
+import { RestaurantContext } from "@/context/RestaurantContext";
 
 export default function index() {
+  const { menu } = useContext(RestaurantContext);
+  const [data, setData] = useState<
+    {
+      name: string;
+      population: number;
+      color: string;
+      legendFontColor: string;
+      legendFontSize: number;
+    }[]
+  >([
+    {
+      name: "Menu 1",
+      population: 160,
+      color: SB_COLOR_SCHEME.SB_PRIMARY,
+      legendFontColor: "#7F7F7F",
+      legendFontSize: 15,
+    },
+  ]);
   const screenWidth = Dimensions.get("window").width;
   const chartConfig = {
     backgroundGradientFrom: "#1D3D30",
@@ -23,48 +43,80 @@ export default function index() {
     useShadowColorFromDataset: false, // optional
   };
 
-  const data = [
-    {
-      name: "Menu 1",
-      population: 160,
-      color: SB_COLOR_SCHEME.SB_PRIMARY,
-      legendFontColor: "#7F7F7F",
-      legendFontSize: 15,
-    },
-    {
-      name: "Menu 2",
-      population: 212,
-      color: SB_COLOR_SCHEME.SB_SECONDARY,
-      legendFontColor: "#7F7F7F",
-      legendFontSize: 15,
-    },
-    {
-      name: "Menu 3",
-      population: 80,
-      color: SB_COLOR_SCHEME.SB_TERTIARY,
-      legendFontColor: "#7F7F7F",
-      legendFontSize: 15,
-    },
-    {
-      name: "Menu 4",
-      population: 47,
-      color: 'black',
-      legendFontColor: "#7F7F7F",
-      legendFontSize: 15,
-    },
-    {
-      name: "Menu 5",
-      population: 90,
-      color: SB_COLOR_SCHEME.SB_PRIMARY_LIGHT,
-      legendFontColor: "#7F7F7F",
-      legendFontSize: 15,
-    },
-  ];
+  function getRandomNumber(): number {
+    return Math.floor(Math.random() * (200 - 10 + 1)) + 10;
+  }
+
+  function generateData() {
+    const color = [
+      SB_COLOR_SCHEME.SB_PRIMARY,
+      SB_COLOR_SCHEME.SB_SECONDARY,
+      SB_COLOR_SCHEME.SB_TERTIARY,
+      "black",
+      SB_COLOR_SCHEME.SB_PRIMARY_LIGHT,
+    ];
+    if (menu.length > 0) {
+      // max 5
+      const tmp = menu.slice(0, 5).map((item, i) => {
+        return {
+          name: item.name,
+          population: getRandomNumber(),
+          color: color[i],
+          legendFontColor: "#7F7F7F",
+          legendFontSize: 15,
+        };
+      });
+
+      setData(tmp);
+    }
+  }
+
+  useEffect(() => {
+    generateData();
+  }, []);
+
+  // const data = [
+  //   {
+  //     name: "Menu 1",
+  //     population: getRandomNumber(),
+  //     color: SB_COLOR_SCHEME.SB_PRIMARY,
+  //     legendFontColor: "#7F7F7F",
+  //     legendFontSize: 15,
+  //   },
+  //   {
+  //     name: "Menu 2",
+  //     population: getRandomNumber(),
+  //     color: SB_COLOR_SCHEME.SB_SECONDARY,
+  //     legendFontColor: "#7F7F7F",
+  //     legendFontSize: 15,
+  //   },
+  //   {
+  //     name: "Menu 3",
+  //     population: getRandomNumber(),
+  //     color: SB_COLOR_SCHEME.SB_TERTIARY,
+  //     legendFontColor: "#7F7F7F",
+  //     legendFontSize: 15,
+  //   },
+  //   {
+  //     name: "Menu 4",
+  //     population: getRandomNumber(),
+  //     color: "black",
+  //     legendFontColor: "#7F7F7F",
+  //     legendFontSize: 15,
+  //   },
+  //   {
+  //     name: "Menu 5",
+  //     population: getRandomNumber(),
+  //     color: SB_COLOR_SCHEME.SB_PRIMARY_LIGHT,
+  //     legendFontColor: "#7F7F7F",
+  //     legendFontSize: 15,
+  //   },
+  // ];
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Order Statistics</Text>
-      <Text style={{marginTop: 20}}>Amount of order received per month</Text>
+      <Text style={{ marginTop: 20 }}>Amount of order received per month</Text>
       <View
         style={styles.separator}
         lightColor="#eee"
@@ -73,7 +125,7 @@ export default function index() {
 
       <PieChart
         data={data}
-        width={screenWidth*0.5}
+        width={screenWidth * 0.5}
         height={220}
         chartConfig={chartConfig}
         accessor="population"

@@ -1,8 +1,6 @@
-// RestaurantProfilePage.js
-
 import { RestaurantContext } from "@/context/RestaurantContext";
 import React, { useContext, useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, Pressable, StyleSheet } from "react-native";
 import { Avatar } from "react-native-elements";
 import * as ImagePicker from "expo-image-picker";
 import { SB_COLOR_SCHEME } from "@/contstants";
@@ -12,11 +10,6 @@ import { router } from "expo-router";
 const Profile = () => {
   const { details, editDetail } = useContext(RestaurantContext);
   const [image, setImage] = useState<string>();
-
-  // Function to update restaurant details
-  const updateDetail = (key: any, value: any) => {
-    editDetail(key, value);
-  };
 
   function getInitial(): string {
     const temp = details.name.split(" ");
@@ -29,26 +22,12 @@ const Profile = () => {
     }
   }
 
-  const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      setImage(result.assets[0].uri);
-    }
-  };
-
   return (
     <View style={styles.container}>
       <Avatar
         size="xlarge"
         rounded
-        source={{ uri: image }}
+        source={{ uri: details.imageUrl }}
         title={getInitial()}
         activeOpacity={0.7}
         containerStyle={{
@@ -60,22 +39,22 @@ const Profile = () => {
         {details.name}
       </Text>
       <Text style={styles.value}>{details.address}</Text>
-      <TouchableOpacity style={[styles.item, { marginTop: 20, width: '50%' }]} onPress={() => router.navigate("/MyProfile")}>
+      <Pressable style={[styles.item, { marginTop: 20, width: '50%' }]} onPress={() => router.navigate("/MyProfile")}>
         <Text>My Profile</Text>
         <NextIcon width={20} height={20} />
-      </TouchableOpacity>
-      <TouchableOpacity style={[styles.item, { width: '50%' }]} onPress={() => router.navigate("/MyMenu")}>
+      </Pressable>
+      <Pressable style={[styles.item, { width: '50%' }]} onPress={() => router.navigate("/MyMenu")}>
         <Text>My Menu</Text>
         <NextIcon width={20} height={20} />
-      </TouchableOpacity>
-      <TouchableOpacity style={[styles.item, { width: '50%' }]}>
+      </Pressable>
+      <Pressable style={[styles.item, { width: '50%' }]}>
         <Text>Settings</Text>
         <NextIcon width={20} height={20} />
-      </TouchableOpacity>
-      <TouchableOpacity style={[styles.item, { width: '50%' }]}>
+      </Pressable>
+      <Pressable style={[styles.item, { width: '50%' }]}>
         <Text>Help</Text>
         <NextIcon width={20} height={20} />
-      </TouchableOpacity>
+      </Pressable>
       {/* <View>
         <View style={styles.details}>
           <Text style={styles.label}>Name</Text>
