@@ -1,22 +1,16 @@
-// RestaurantProfilePage.js
-
 import { RestaurantContext } from "@/context/RestaurantContext";
 import React, { useContext, useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, Pressable, StyleSheet, ScrollView } from "react-native";
 import { Avatar } from "react-native-elements";
 import * as ImagePicker from "expo-image-picker";
 import { SB_COLOR_SCHEME } from "@/contstants";
-import NextIcon from '../../assets/icons/chevron-forward-outline.svg';
+import NextIcon from "../../assets/icons/chevron-forward-outline.svg";
 import { router } from "expo-router";
 
 const Profile = () => {
-  const { details, editDetail } = useContext(RestaurantContext);
+  const { details, editDetail, auth, updateAuth } =
+    useContext(RestaurantContext);
   const [image, setImage] = useState<string>();
-
-  // Function to update restaurant details
-  const updateDetail = (key: any, value: any) => {
-    editDetail(key, value);
-  };
 
   function getInitial(): string {
     const temp = details.name.split(" ");
@@ -29,80 +23,60 @@ const Profile = () => {
     }
   }
 
-  const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      setImage(result.assets[0].uri);
-    }
+  const handleSignOut = () => {
+    updateAuth(false, "", "");
+    router.navigate('/welcome')
   };
 
   return (
-    <View style={styles.container}>
-      <Avatar
-        size="xlarge"
-        rounded
-        source={{ uri: image }}
-        title={getInitial()}
-        activeOpacity={0.7}
-        containerStyle={{
-          backgroundColor: SB_COLOR_SCHEME.SB_SECONDARY,
-          marginBottom: 20,
-        }}
-      />
-      <Text style={[styles.value, { fontWeight: "500", fontSize: 16 }]}>
-        {details.name}
-      </Text>
-      <Text style={styles.value}>{details.address}</Text>
-      <TouchableOpacity style={[styles.item, { marginTop: 20, width: '50%' }]} onPress={() => router.navigate("/MyProfile")}>
-        <Text>My Profile</Text>
-        <NextIcon width={20} height={20} />
-      </TouchableOpacity>
-      <TouchableOpacity style={[styles.item, { width: '50%' }]} onPress={() => router.navigate("/MyMenu")}>
-        <Text>My Menu</Text>
-        <NextIcon width={20} height={20} />
-      </TouchableOpacity>
-      <TouchableOpacity style={[styles.item, { width: '50%' }]}>
-        <Text>Settings</Text>
-        <NextIcon width={20} height={20} />
-      </TouchableOpacity>
-      <TouchableOpacity style={[styles.item, { width: '50%' }]}>
-        <Text>Help</Text>
-        <NextIcon width={20} height={20} />
-      </TouchableOpacity>
-      {/* <View>
-        <View style={styles.details}>
-          <Text style={styles.label}>Name</Text>
-          <Text style={styles.value}>{details.name}</Text>
-        </View>
-        <View style={styles.details}>
-          <Text style={styles.label}>Address</Text>
-          <Text style={styles.value}>{details.address}</Text>
-        </View>
-        <View style={styles.details}>
-          <Text style={styles.label}>Phone</Text>
-          <Text style={styles.value}>{details.phone}</Text>
-        </View>
-        <View style={styles.details}>
-          <Text style={styles.label}>Average Rating</Text>
-          <Text style={styles.value}>{details.averageRating}</Text>
-        </View>
-        <View style={styles.details}>
-          <Text style={styles.label}>Average Wait Time</Text>
-          <Text style={styles.value}>{details.averageWaitTime} mins</Text>
-        </View>
-        <View style={styles.details}>
-          <Text style={styles.label}>Description</Text>
-          <Text style={styles.value}>{details.description}</Text>
-        </View>
-      </View> */}
-    </View>
+    <ScrollView>
+      <View style={styles.container}>
+        <Avatar
+          size="xlarge"
+          rounded
+          source={{ uri: details.imageUrl }}
+          title={getInitial()}
+          activeOpacity={0.7}
+          containerStyle={{
+            backgroundColor: SB_COLOR_SCHEME.SB_SECONDARY,
+            marginBottom: 20,
+          }}
+        />
+        <Text style={[styles.value, { fontWeight: "500", fontSize: 16 }]}>
+          {details.name}
+        </Text>
+        <Text style={styles.value}>{details.address}</Text>
+        <Pressable
+          style={[styles.item, { marginTop: 20, width: "50%" }]}
+          onPress={() => router.navigate("/MyProfile")}
+        >
+          <Text>My Profile</Text>
+          <NextIcon width={20} height={20} />
+        </Pressable>
+        <Pressable
+          style={[styles.item, { width: "50%" }]}
+          onPress={() => router.navigate("/MyMenu")}
+        >
+          <Text>My Menu</Text>
+          <NextIcon width={20} height={20} />
+        </Pressable>
+        <Pressable style={[styles.item, { width: "50%" }]}>
+          <Text>Settings</Text>
+          <NextIcon width={20} height={20} />
+        </Pressable>
+        <Pressable style={[styles.item, { width: "50%" }]}>
+          <Text>Help</Text>
+          <NextIcon width={20} height={20} />
+        </Pressable>
+        <Pressable
+          style={[styles.item, { width: "50%" }]}
+          onPress={handleSignOut}
+        >
+          <Text>Sign Out</Text>
+          <NextIcon width={20} height={20} />
+        </Pressable>
+      </View>
+    </ScrollView>
   );
 };
 
@@ -123,11 +97,11 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: 'center',
-    backgroundColor: '#f5f5f5',
+    alignItems: "center",
+    backgroundColor: "#f5f5f5",
     padding: 20,
     margin: 8,
-    borderRadius: 6
+    borderRadius: 6,
   },
   card: {
     backgroundColor: "#fff",

@@ -24,11 +24,18 @@ export interface RestaurantDetails {
   averageRating: number;
   averageWaitTime: number;
   description: string;
+  imageUrl: string;
 }
 
 export const RestaurantContext = createContext<useRestaurantReturn>({
+  auth: {
+    isLoggedIn: false,
+    email: "",
+    password: "",
+  },
   menu: [],
   addToMenu: () => {},
+  setAllMenu: () => {},
   removeFromMenu: () => {},
   details: {
     _id: "",
@@ -39,9 +46,11 @@ export const RestaurantContext = createContext<useRestaurantReturn>({
     averageRating: 0,
     averageWaitTime: 0,
     description: "",
+    imageUrl: "",
   },
   editDetail: () => {},
   editMenu: () => {},
+  updateAuth: () => {},
 });
 
 export function RestaurantContextProvider({ children }: any) {

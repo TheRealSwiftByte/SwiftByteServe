@@ -2,12 +2,19 @@ import { MenuItem, RestaurantDetails } from "@/context/RestaurantContext";
 import { useEffect, useState } from "react";
 
 export interface useRestaurantReturn {
+  auth: {
+    isLoggedIn: boolean;
+    email: string;
+    password: string;
+  };
   menu: MenuItem[];
   addToMenu: (menuItem: MenuItem) => void;
   removeFromMenu: (menuItem: MenuItem) => void;
   editMenu: (id: string, editedItem: MenuItem) => void;
   details: RestaurantDetails;
-  editDetail: (key: keyof RestaurantDetails, value: string | number) => void;
+  editDetail: (value: RestaurantDetails) => void;
+  updateAuth: (isLoggedIn: boolean, email: string, password: string) => void;
+  setAllMenu: (menu: MenuItem[]) => void;
 }
 
 export const useRestaurant = (): useRestaurantReturn => {
@@ -67,13 +74,23 @@ export const useRestaurant = (): useRestaurantReturn => {
         "https://images.pexels.com/photos/3297882/pexels-photo-3297882.jpeg?auto=compress&cs=tinysrgb&w=800",
     },
   ]);
+  const [auth, setAuth] = useState<{
+    isLoggedIn: boolean;
+    email: string;
+    password: string;
+  }>({
+    isLoggedIn: false,
+    email: "",
+    password: "",
+  });
   const [details, setDetails] = useState<RestaurantDetails>({
     _id: "001",
     categories: [
       {
-        id: 1,
-        name: "Asian",
-        imageUrl: "",
+        id: 7,
+        name: "Thailand",
+        imageUrl:
+          "https://images.pexels.com/photos/1132047/pexels-photo-1132047.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
       },
     ],
     name: "Kinn Thai",
@@ -82,18 +99,27 @@ export const useRestaurant = (): useRestaurantReturn => {
     averageRating: 4.5,
     averageWaitTime: 48,
     description: "Famous thai restaurant in Wollongong.",
+    imageUrl: "https://images.pexels.com/photos/12178096/pexels-photo-12178096.jpeg?auto=compress&cs=tinysrgb&w=800",
   });
 
   const addToMenu = (menuItem: MenuItem) => {
     setMenu((prevMenu) => [...prevMenu, menuItem]);
   };
 
+  const updateAuth = (isLoggedIn: boolean, email: string, password: string) => {
+    setAuth({
+      isLoggedIn,
+      email,
+      password,
+    });
+  };
+
   const removeFromMenu = (menuItem: MenuItem) => {
     setMenu(menu.filter((item) => item.id !== menuItem.id));
   };
 
-  const editDetail = (key: keyof RestaurantDetails, value: string | number) => {
-    setDetails({ ...details, [key]: value });
+  const editDetail = (value: RestaurantDetails) => {
+    setDetails((prevValue) => value);
   };
 
   const editMenu = (id: string, editedItem: MenuItem) => {
@@ -107,12 +133,19 @@ export const useRestaurant = (): useRestaurantReturn => {
     setMenu((prevMenu) => [...newMenu]);
   };
 
+  const setAllMenu = (menu: MenuItem[]) => {
+    setMenu(menu)
+  }
+
   return {
+    auth,
     menu,
     addToMenu,
     removeFromMenu,
     details,
     editDetail,
     editMenu,
+    updateAuth,
+    setAllMenu
   };
 };
