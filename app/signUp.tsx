@@ -166,7 +166,7 @@ export default function signUp() {
               ></TextInput>
             </View>
           </View>
-          <Link href="/dashboard" asChild>
+          <Link href="/" asChild>
             <Button
               text={"Sign Up"}
               type={"secondary"}
