@@ -50,7 +50,7 @@ export default function MenuModal() {
         name,
         price,
         description,
-        imageUrl: image
+        imageUrl: image,
       });
       router.navigate("/MyMenu");
     } else {
@@ -112,13 +112,17 @@ export default function MenuModal() {
             maxLength={255}
           />
           <Text style={styles.label}>Price</Text>
-          {/* <TextInput
+          <TextInput
             style={styles.input}
             placeholder="Enter price"
             value={price?.toString()}
-            onChangeText={setPrice}
+            onChangeText={(text: string) => {
+              if (parseInt(text)) {
+                setPrice(parseInt(text));
+              }
+            }}
             maxLength={16}
-          /> */}
+          />
           <Button
             text={menuItemId ? "Save" : "Add"}
             buttonStyle={{ width: "20%" }}
