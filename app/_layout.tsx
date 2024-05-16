@@ -11,6 +11,7 @@ import { useEffect } from "react";
 
 import { useColorScheme } from "@/components/useColorScheme";
 import { Button } from "@swift-byte/switftbytecomponents";
+import { RestaurantContextProvider } from "@/context/RestaurantContext";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -54,33 +55,34 @@ function RootLayoutNav() {
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <Stack initialRouteName="welcome">
-        <Stack.Screen name="welcome" options={{ headerShown: false }} />
-        <Stack.Screen name="signIn" options={{ headerShown: false }} />
-        <Stack.Screen name="signUp" options={{ headerShown: false }} />
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen
-          name="MyMenu"
-          options={{
-            title: "My Menu",
-            headerRight: () => (
-              
-              <Button
-              buttonStyle={{marginHorizontal: 20}}
-                text={"+ Add Menu"}
-                type={"primary"}
-                size="small"
-                onPress={function (): void {
-                  router.navigate("/MenuModal")
-                }}
-              />
-            ),
-          }}
-        />
-        <Stack.Screen name="MyProfile" options={{ title: "My Profile" }} />
-        <Stack.Screen name="MenuModal" options={{ title: "Menu" }} />
-        <Stack.Screen name="modal" options={{ presentation: "modal" }} />
-      </Stack>
+      <RestaurantContextProvider>
+        <Stack initialRouteName="welcome">
+          <Stack.Screen name="welcome" options={{ headerShown: false }} />
+          <Stack.Screen name="signIn" options={{ headerShown: false }} />
+          <Stack.Screen name="signUp" options={{ headerShown: false }} />
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="MyMenu"
+            options={{
+              title: "My Menu",
+              headerRight: () => (
+                <Button
+                  buttonStyle={{ marginHorizontal: 20 }}
+                  text={"+ Add Menu"}
+                  type={"primary"}
+                  size="small"
+                  onPress={function (): void {
+                    router.navigate("/MenuModal");
+                  }}
+                />
+              ),
+            }}
+          />
+          <Stack.Screen name="MenuModal" options={{ title: "Menu" }} />
+          <Stack.Screen name="MyProfile" options={{ title: "My Profile" }} />
+          <Stack.Screen name="modal" options={{ presentation: "modal" }} />
+        </Stack>
+      </RestaurantContextProvider>
     </ThemeProvider>
   );
 }

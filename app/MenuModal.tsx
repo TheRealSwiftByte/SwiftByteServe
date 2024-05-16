@@ -45,10 +45,13 @@ export default function MenuModal() {
 
   const handleSubmit = () => {
     if (menuItemId) {
-      editMenu("name", name);
-      editMenu("description", description);
-      editMenu("price", price);
-      editMenu("imageUrl", image);
+      editMenu(menuItemId, {
+        id: menuItemId,
+        name,
+        price,
+        description,
+        imageUrl: image
+      });
       router.navigate("/MyMenu");
     } else {
       if (image && name && price && description) {
@@ -109,14 +112,13 @@ export default function MenuModal() {
             maxLength={255}
           />
           <Text style={styles.label}>Price</Text>
-          <TextInput
+          {/* <TextInput
             style={styles.input}
             placeholder="Enter price"
             value={price?.toString()}
-            onChangeText={(text: string) => setPrice(parseInt(text))}
-            keyboardType="numeric"
+            onChangeText={setPrice}
             maxLength={16}
-          />
+          /> */}
           <Button
             text={menuItemId ? "Save" : "Add"}
             buttonStyle={{ width: "20%" }}
