@@ -28,8 +28,14 @@ export interface RestaurantDetails {
 }
 
 export const RestaurantContext = createContext<useRestaurantReturn>({
+  auth: {
+    isLoggedIn: false,
+    email: "",
+    password: "",
+  },
   menu: [],
   addToMenu: () => {},
+  setAllMenu: () => {},
   removeFromMenu: () => {},
   details: {
     _id: "",
@@ -44,6 +50,7 @@ export const RestaurantContext = createContext<useRestaurantReturn>({
   },
   editDetail: () => {},
   editMenu: () => {},
+  updateAuth: () => {},
 });
 
 export function RestaurantContextProvider({ children }: any) {

@@ -13,20 +13,20 @@ export default function welcome() {
       <View style={styles.container}>
         <Logo width={200} height={250} />
         <View>
-          <Link href="/signIn" asChild>
-            <Button
-              text={"Sign In"}
-              type={"primary"}
-              onPress={function (): void {}}
-            ></Button>
-          </Link>
-          <Link href="/signUp" asChild>
-            <Button
-              text={"Sign Up"}
-              type={"secondary"}
-              onPress={function (): void {}}
-            ></Button>
-          </Link>
+          <Button
+            text={"Sign In"}
+            type={"primary"}
+            onPress={function (): void {
+              router.navigate("/signIn");
+            }}
+          ></Button>
+          <Button
+            text={"Sign Up"}
+            type={"secondary"}
+            onPress={function (): void {
+              router.navigate("/signUp");
+            }}
+          ></Button>
         </View>
       </View>
     </SafeAreaView>
@@ -41,7 +41,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     width: "100%",
-    // gap: 25,
     backgroundColor: SB_COLOR_SCHEME.SB_SECONDARY,
   },
 });
