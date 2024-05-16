@@ -1,10 +1,10 @@
 // RestaurantProfilePage.js
 
 import {
-  useRestaurantContext,
   FoodCategory,
+  RestaurantContext,
 } from "@/context/RestaurantContext";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Avatar } from "react-native-elements";
 import * as ImagePicker from "expo-image-picker";
@@ -13,7 +13,7 @@ import { Button, TextInput } from "@swift-byte/switftbytecomponents";
 import { router } from "expo-router";
 
 const MyProfile = () => {
-  const { details, editDetail } = useRestaurantContext();
+  const { details, editDetail } = useContext(RestaurantContext);
   const [image, setImage] = useState<string>();
 
   const [name, setName] = useState<string>("");

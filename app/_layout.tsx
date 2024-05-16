@@ -5,11 +5,12 @@ import {
   ThemeProvider,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
+import { Stack, router } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 
 import { useColorScheme } from "@/components/useColorScheme";
+import { Button } from "@swift-byte/switftbytecomponents";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -58,8 +59,26 @@ function RootLayoutNav() {
         <Stack.Screen name="signIn" options={{ headerShown: false }} />
         <Stack.Screen name="signUp" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="MyMenu" options={{ title: 'My Menu' }} />
-        <Stack.Screen name="MyProfile" options={{ title: 'My Profile' }} />
+        <Stack.Screen
+          name="MyMenu"
+          options={{
+            title: "My Menu",
+            headerRight: () => (
+              
+              <Button
+              buttonStyle={{marginHorizontal: 20}}
+                text={"+ Add Menu"}
+                type={"primary"}
+                size="small"
+                onPress={function (): void {
+                  router.navigate("/MenuModal")
+                }}
+              />
+            ),
+          }}
+        />
+        <Stack.Screen name="MyProfile" options={{ title: "My Profile" }} />
+        <Stack.Screen name="MenuModal" options={{ title: "Menu" }} />
         <Stack.Screen name="modal" options={{ presentation: "modal" }} />
       </Stack>
     </ThemeProvider>

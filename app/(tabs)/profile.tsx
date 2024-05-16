@@ -1,7 +1,7 @@
 // RestaurantProfilePage.js
 
-import { useRestaurantContext } from "@/context/RestaurantContext";
-import React, { useState } from "react";
+import { RestaurantContext } from "@/context/RestaurantContext";
+import React, { useContext, useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Avatar } from "react-native-elements";
 import * as ImagePicker from "expo-image-picker";
@@ -10,7 +10,7 @@ import NextIcon from '../../assets/icons/chevron-forward-outline.svg';
 import { router } from "expo-router";
 
 const Profile = () => {
-  const { details, editDetail } = useRestaurantContext();
+  const { details, editDetail } = useContext(RestaurantContext);
   const [image, setImage] = useState<string>();
 
   // Function to update restaurant details
