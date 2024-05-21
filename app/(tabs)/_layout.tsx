@@ -6,7 +6,7 @@ import { Pressable } from "react-native";
 import Colors from "@/constants/Colors";
 import { useColorScheme } from "@/components/useColorScheme";
 import { useClientOnlyValue } from "@/components/useClientOnlyValue";
-import IconChat from "../../assets/icons/chat-multiple.svg";
+import IconOrders from "../../assets/icons/clipboard-outline.svg";
 import IconProfile from "../../assets/icons/storefront-outline.svg";
 import HomeIcon from "../../assets/icons/home-outline.svg";
 import ReviewIcon from "../../assets/icons/star-outline.svg";
@@ -41,6 +41,13 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="orderRequests"
+        options={{
+          title: "Orders Requests",
+          tabBarIcon: () => <IconOrders />,
+        }}
+      />
+      <Tabs.Screen
         name="reviews"
         options={{
           title: "Reviews",
@@ -54,6 +61,7 @@ export default function TabLayout() {
           tabBarIcon: () => <IconProfile />,
         }}
       />
+      
     </Tabs>
   );
 }
