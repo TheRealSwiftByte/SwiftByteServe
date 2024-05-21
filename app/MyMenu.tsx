@@ -8,49 +8,74 @@ import {
 } from "react-native";
 import React, { useContext } from "react";
 import { router } from "expo-router";
-import { MenuItem, RestaurantContext,  } from "@/context/RestaurantContext";
+import { MenuItem, RestaurantContext } from "@/context/RestaurantContext";
 import { SB_COLOR_SCHEME } from "@/contstants";
+import IconTrash from "../assets/icons/trash-outline.svg";
 
 export default function MyMenu() {
   const { menu, addToMenu, removeFromMenu } = useContext(RestaurantContext);
 
   const renderItem = (item: MenuItem) => {
     return (
-      <Pressable
+      <View
         key={item.id}
-        style={[styles.dFlex, { marginBottom: 16 }]}
-        onPress={() => router.navigate({
-            pathname: "MenuModal",
-            params: {
-                menuItemId: item.id.toString(),
-            },
-        })}
+        style={[
+          styles.dFlex,
+          { marginBottom: 16, justifyContent: "space-between" },
+        ]}
       >
-        <View>
-          <Image
-            source={{ uri: item.imageUrl }}
-            style={{
-              width: 70,
-              height: 70,
-              backgroundColor: "grey",
-              borderRadius: 25,
-            }}
+        <Pressable
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 16,
+          }}
+          onPress={() =>
+            router.navigate({
+              pathname: "MenuModal",
+              params: {
+                menuItemId: item.id.toString(),
+              },
+            })
+          }
+        >
+          <View>
+            <Image
+              source={{ uri: item.imageUrl }}
+              style={{
+                width: 70,
+                height: 70,
+                backgroundColor: "grey",
+                borderRadius: 25,
+              }}
+            />
+          </View>
+          <View>
+            <Text style={{ fontSize: 16, fontWeight: "bold" }}>
+              {item.name}
+            </Text>
+            <Text>{item.description}</Text>
+            <Text
+              style={{
+                color: SB_COLOR_SCHEME.SB_SECONDARY,
+                fontSize: 14,
+                fontWeight: "bold",
+              }}
+            >
+              ${item.price}
+            </Text>
+          </View>
+        </Pressable>
+
+        <Pressable style={{ marginRight: 20 }} onPress={() => removeFromMenu(item)}>
+          <IconTrash
+            width={24}
+            height={24}
+            
           />
-        </View>
-        <View>
-          <Text style={{ fontSize: 16, fontWeight: "bold" }}>{item.name}</Text>
-          <Text>{item.description}</Text>
-          <Text
-            style={{
-              color: SB_COLOR_SCHEME.SB_SECONDARY,
-              fontSize: 14,
-              fontWeight: "bold",
-            }}
-          >
-            ${item.price}
-          </Text>
-        </View>
-      </Pressable>
+        </Pressable>
+      </View>
     );
   };
 
