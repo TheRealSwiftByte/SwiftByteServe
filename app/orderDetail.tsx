@@ -46,7 +46,7 @@ export default function orderHistory() {
   }, []);
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{ height: '100%'}}>
       <ScrollView style={styles.scrollView}>
         <View style={styles.container}>
           <View>
