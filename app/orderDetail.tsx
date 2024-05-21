@@ -3,7 +3,6 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
 } from "react-native";
 import React, { useEffect, useState } from "react";
@@ -22,7 +21,7 @@ export default function orderHistory() {
 
   useEffect(() => {
     if (id) {
-      console.log('id',id)
+      console.log("id", id);
       const ord = orders.find((item) => item.id == id);
       setOrder(ord);
       const itemIdCounts: { [itemId: string]: number } = {};
@@ -46,11 +45,10 @@ export default function orderHistory() {
   }, []);
 
   return (
-    <SafeAreaView style={{ height: '100%'}}>
+    <SafeAreaView style={{ height: "100%" }}>
       <ScrollView style={styles.scrollView}>
         <View style={styles.container}>
-          <View>
-          </View>
+          <View></View>
           <View
             style={{
               display: "flex",
@@ -71,7 +69,6 @@ export default function orderHistory() {
                 {order?.restaurant.address.zipCode}
               </Text>
             </View>
-
           </View>
 
           <View style={{ width: "100%", marginBottom: 8 }}>
@@ -105,30 +102,22 @@ export default function orderHistory() {
                 );
               })}
               <View style={styles.summaryItem}>
-                <Text style={{ color: "black" }}>
-                  Delivery Fee
-                </Text>
+                <Text style={{ color: "black" }}>Delivery Fee</Text>
                 <Text style={{ color: "black" }}>
                   ${((order?.netTotal ?? 0) * 0.05).toFixed(2)}
                 </Text>
               </View>
               <View style={styles.summaryItem}>
                 <Text style={{ color: "black" }}>VAT</Text>
-                <Text style={{ color: "black" }}>
-                  ${order?.tax.toFixed(2)}
-                </Text>
+                <Text style={{ color: "black" }}>${order?.tax.toFixed(2)}</Text>
               </View>
               <View
                 style={
                   order?.promoCode ? styles.summaryItem : { display: "none" }
                 }
               >
-                <Text style={{ color: "black" }}>
-                  Coupon
-                </Text>
-                <Text style={{ color: "black" }}>
-                  -${order?.discount}
-                </Text>
+                <Text style={{ color: "black" }}>Coupon</Text>
+                <Text style={{ color: "black" }}>-${order?.discount}</Text>
               </View>
               <View style={[styles.summaryItem, { borderBottomWidth: 0 }]}>
                 <Text
