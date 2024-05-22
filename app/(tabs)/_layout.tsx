@@ -11,6 +11,9 @@ import IconProfile from "../../assets/icons/storefront-outline.svg";
 import HomeIcon from "../../assets/icons/home-outline.svg";
 import ReviewIcon from "../../assets/icons/star-outline.svg";
 import HistoryIcon from "../../assets/icons/receipt-outline.svg";
+import { SB_COLOR_SCHEME } from "@/contstants";
+import { RestaurantContextProvider } from "@/context/RestaurantContext";
+import { orders } from "@/mock_data";
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarIcon(props: {
@@ -45,6 +48,7 @@ export default function TabLayout() {
         options={{
           title: "Orders",
           tabBarIcon: () => <IconOrders />,
+          tabBarBadge: orders.length // change to request here
         }}
       />
       <Tabs.Screen

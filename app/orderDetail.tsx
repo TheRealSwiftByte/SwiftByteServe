@@ -1,13 +1,9 @@
-import {
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import { MenuItem, Order, orders } from "@/mock_data";
 import { useLocalSearchParams } from "expo-router";
+import { Button } from "@swift-byte/switftbytecomponents";
+import { SB_COLOR_SCHEME } from "@/contstants";
 
 export default function orderHistory() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -18,6 +14,10 @@ export default function orderHistory() {
       count: number;
     }[]
   >();
+
+  const handleAcceptOrder = (id: string) => {};
+
+  const handleRejectOrder = (id: string) => {};
 
   useEffect(() => {
     if (id) {
@@ -69,6 +69,28 @@ export default function orderHistory() {
                 {order?.restaurant.address.zipCode}
               </Text>
             </View>
+            <Button
+              size="small"
+              text={order ? order?.status.toUpperCase() : ""}
+              buttonStyle={{
+                width: "10%",
+                backgroundColor:
+                  order?.status == "completed"
+                    ? SB_COLOR_SCHEME.SB_SECONDARY
+                    : order?.status == "declined"
+                    ? SB_COLOR_SCHEME.SB_WARNING
+                    : SB_COLOR_SCHEME.SB_PRIMARY,
+                marginRight: 10,
+              }}
+              type={"primary"}
+              onPress={() => {}}
+              textStyle={{
+                color:
+                  order?.status == "completed"
+                    ? SB_COLOR_SCHEME.SB_PRIMARY
+                    : SB_COLOR_SCHEME.SB_SECONDARY,
+              }}
+            />
           </View>
 
           <View style={{ width: "100%", marginBottom: 8 }}>
@@ -141,6 +163,41 @@ export default function orderHistory() {
               </View>
             </View>
           </View>
+          {order?.status == "pending" ? (
+            <View
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 10,
+                justifyContent: "flex-end",
+              }}
+            >
+              <Button
+                size="small"
+                text={"Decline"}
+                buttonStyle={{
+                  width: "20%",
+                  backgroundColor: "transparent",
+                  borderWidth: 1,
+                  borderColor: SB_COLOR_SCHEME.SB_WARNING,
+                  marginRight: 10,
+                }}
+                type={"primary"}
+                onPress={() => handleRejectOrder(order.id)}
+                textStyle={{ color: SB_COLOR_SCHEME.SB_WARNING }}
+              />
+              <Button
+                size="small"
+                text={"Accept"}
+                buttonStyle={{ width: "20%" }}
+                type={"secondary"}
+                onPress={() => handleAcceptOrder(order.id)}
+              />
+            </View>
+          ) : (
+            <></>
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>

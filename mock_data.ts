@@ -1,3 +1,5 @@
+import { Review } from "./api/schema/Review";
+
 export interface Category {
     id: number;
     name: string;
@@ -502,3 +504,30 @@ export interface Category {
       imageUrl: 'https://images.pexels.com/photos/298217/pexels-photo-298217.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'
     }
   ]
+
+  export const reviews: Review[] = [
+    {
+        id: '1',
+        customerId: 'cust123',
+        restaurantId: 'rest456',
+        rating: 5,
+        comment: 'Amazing food and great service! Will definitely come back.',
+        createdAt: 1684556800000 // This is a timestamp (in milliseconds) for May 19, 2023
+    },
+    {
+        id: '2',
+        customerId: 'cust789',
+        restaurantId: 'rest456',
+        rating: 4,
+        comment: 'Good food but a bit pricey.',
+        createdAt: 1687148800000 // This is a timestamp (in milliseconds) for June 19, 2023
+    },
+    {
+        id: '3',
+        customerId: 'cust456',
+        restaurantId: 'rest123',
+        rating: 3,
+        comment: 'Average experience. The food was okay, but the service was slow.',
+        createdAt: 1689740800000 // This is a timestamp (in milliseconds) for July 19, 2023
+    }
+];

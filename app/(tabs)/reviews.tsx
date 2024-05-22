@@ -1,4 +1,11 @@
-import { SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  FlatList,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import React, { useState } from "react";
 import { Button, TextInput } from "@swift-byte/switftbytecomponents";
 import { Link, router } from "expo-router";
@@ -6,267 +13,103 @@ import User from "../../assets/images/user.svg";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { SB_COLOR_SCHEME } from "@/contstants";
 import { AirbnbRating } from "react-native-ratings";
+import { reviews } from "@/mock_data";
+import { Review as ReviewInterface } from "@/api/schema/SwiftByteTypes";
 
 const Review = () => {
-  return (
-    <SafeAreaView style={{ height: "100%", backgroundColor: "white" }}>
-      <KeyboardAwareScrollView style={styles.scrollView}>
-        <View style={styles.container}>
-          <View style={styles.rev}>
-            <View style={styles.heading}>
-              <Text
-                style={{
-                  fontSize: 16,
-                  fontWeight: "500",
-                  marginBottom: 8,
-                }}
-              >
-                Reviews
-              </Text>
-              <Text
-                style={{
-                  fontSize: 14,
-                  color: "8E8E93",
-                }}
-              >
-                Reviews submitted by customers
-              </Text>
-            </View>
-
-            <View style={styles.dFlex}>
-              <View style={styles.userRow}>
-                <View
-                  style={[
-                    styles.dFlex,
-                    {
-                      alignItems: "flex-end",
-                      flexDirection: "column",
-                      alignSelf: "stretch",
-                    },
-                  ]}
+  const renderItem = (item: ReviewInterface) => {
+    return (
+      <View
+        style={[
+          styles.dFlex,
+          { flex: 1, justifyContent: "space-between", width: "100%" },
+        ]}
+        key={item.id}
+      >
+        <View style={[styles.userRow, { flex: 4 }]}>
+          <View
+            style={[
+              styles.dFlex,
+              {
+                alignItems: "flex-start",
+                flexDirection: "column",
+                // alignSelf: "stretch",
+                width: "100%",
+              },
+            ]}
+          >
+            <View style={[styles.div, { width: "100%" }]}>
+              <User width="50" />
+              <View style={styles.author}>
+                <Text
+                  style={{
+                    fontWeight: "100",
+                    marginLeft: 8,
+                    marginBottom: 4,
+                    fontSize: 12,
+                    color: "8E8E93",
+                  }}
                 >
-                  <View style={styles.div}>
-                    <User width="50" />
-                    <View style={styles.author}>
-                      <Text
-                        style={{
-                          fontWeight: "100",
-                          marginLeft: 8,
-                          marginBottom: 4,
-                          fontSize: 12,
-                          color: "8E8E93",
-                        }}
-                      >
-                        20/12/2020
-                      </Text>
-                      <Text
-                        style={{
-                          fontWeight: "500",
-                          marginLeft: 8,
-                          fontSize: 14,
-                        }}
-                      >
-                        Awesome and Nice
-                      </Text>
-                      <View style={[styles.userRate, styles.rowFlexBox]}>
-                        <View style={styles.star}>
-                          <AirbnbRating
-                            count={5}
-                            defaultRating={4}
-                            size={10}
-                            showRating={false}
-                            isDisabled
-                            selectedColor="yellow"
-                          />
-                        </View>
-                      </View>
-                      <Text
-                        style={{
-                          fontWeight: "100",
-                          marginLeft: 8,
-                          color: "8E8E93",
-                          fontSize: 12,
-                        }}
-                      >
-                        This Food so tasty & delicious. Breakfast so fast
-                        Delivered in my place.
-                      </Text>
-                    </View>
+                  {new Date(item.createdAt).toLocaleDateString()} |{" "}
+                  {new Date(item.createdAt).toLocaleTimeString()}
+                </Text>
+                <Text
+                  style={{
+                    fontWeight: "500",
+                    marginLeft: 8,
+                    fontSize: 14,
+                  }}
+                >
+                  {item.customerId}
+                </Text>
+                <View style={[styles.userRate, styles.rowFlexBox]}>
+                  <View style={styles.star}>
+                    <AirbnbRating
+                      count={item.rating}
+                      defaultRating={4}
+                      size={10}
+                      showRating={false}
+                      isDisabled
+                      selectedColor="yellow"
+                    />
                   </View>
                 </View>
-              </View>
-
-              <View
-                style={[
-                  styles.dFlex,
-                  { alignItems: "flex-start", marginLeft: 50 },
-                ]}
-              >
-                <Button
-                  text={"Reply"}
-                  type={"secondary"}
-                  onPress={() => router.navigate("/replyReviews")}
-                ></Button>
-              </View>
-            </View>
-
-            <View style={styles.dFlex}>
-              <View style={styles.userRow}>
-                <View
-                  style={[
-                    styles.dFlex,
-                    {
-                      alignItems: "flex-end",
-                      flexDirection: "column",
-                      alignSelf: "stretch",
-                    },
-                  ]}
+                <Text
+                  style={{
+                    fontWeight: "100",
+                    marginLeft: 8,
+                    color: "8E8E93",
+                    fontSize: 12,
+                  }}
                 >
-                  <View style={styles.div}>
-                    <User width="50" />
-                    <View style={styles.author}>
-                      <Text
-                        style={{
-                          fontWeight: "100",
-                          marginLeft: 8,
-                          marginBottom: 4,
-                          color: "8E8E93",
-                          fontSize: 12,
-                        }}
-                      >
-                        20/12/2020
-                      </Text>
-                      <Text
-                        style={{
-                          fontWeight: "500",
-                          marginLeft: 8,
-                          fontSize: 14,
-                        }}
-                      >
-                        Great Food and Service
-                      </Text>
-                      <View style={[styles.userRate, styles.rowFlexBox]}>
-                        <View style={styles.star}>
-                          <AirbnbRating
-                            count={5}
-                            defaultRating={5}
-                            size={10}
-                            showRating={false}
-                            isDisabled
-                            selectedColor="yellow"
-                          />
-                        </View>
-                      </View>
-                      <Text
-                        style={{
-                          fontWeight: "100",
-                          marginLeft: 8,
-                          color: "8E8E93",
-                          fontSize: 12,
-                        }}
-                      >
-                        This Food so tasty & delicious. Breakfast so fast
-                        Delivered in my place. Chef is very friendly. I’m really
-                        like chef for Home Food Order. Thanks.
-                      </Text>
-                    </View>
-                  </View>
-                </View>
-              </View>
-              <View
-                style={[
-                  styles.dFlex,
-                  { alignItems: "flex-start", marginLeft: 50 },
-                ]}
-              >
-                <Button
-                  text={"Reply"}
-                  type={"secondary"}
-                  onPress={() => router.navigate("/replyReviews")}
-                ></Button>
-              </View>
-            </View>
-
-            <View style={styles.dFlex}>
-              <View style={styles.userRow}>
-                <View
-                  style={[
-                    styles.dFlex,
-                    {
-                      alignItems: "flex-end",
-                      flexDirection: "column",
-                      alignSelf: "stretch",
-                    },
-                  ]}
-                >
-                  <View style={styles.div}>
-                    <User width="50" />
-                    <View style={styles.author}>
-                      <Text
-                        style={{
-                          fontWeight: "100",
-                          marginLeft: 8,
-                          marginBottom: 4,
-                          color: "8E8E93",
-                          fontSize: 12,
-                        }}
-                      >
-                        20/12/2020
-                      </Text>
-                      <Text
-                        style={{
-                          fontWeight: "500",
-                          marginLeft: 8,
-                          fontSize: 14,
-                        }}
-                      >
-                        Great Food and Service
-                      </Text>
-                      <View style={[styles.userRate, styles.rowFlexBox]}>
-                        <View style={styles.star}>
-                          <AirbnbRating
-                            count={5}
-                            defaultRating={5}
-                            size={10}
-                            showRating={false}
-                            isDisabled
-                            selectedColor="yellow"
-                          />
-                        </View>
-                      </View>
-                      <Text
-                        style={{
-                          fontWeight: "100",
-                          marginLeft: 8,
-                          color: "8E8E93",
-                          fontSize: 12,
-                        }}
-                      >
-                        This Food so tasty & delicious. Breakfast so fast
-                        Delivered in my place. Chef is very friendly. I’m really
-                        like chef for Home Food Order. Thanks.
-                      </Text>
-                    </View>
-                  </View>
-                </View>
-              </View>
-              <View
-                style={[
-                  styles.dFlex,
-                  { alignItems: "flex-start", marginLeft: 50 },
-                ]}
-              >
-                <Button
-                  text={"Reply"}
-                  type={"secondary"}
-                  onPress={() => router.navigate("/replyReviews")}
-                ></Button>
+                  {item.comment}
+                </Text>
               </View>
             </View>
           </View>
         </View>
-      </KeyboardAwareScrollView>
-    </SafeAreaView>
+
+        <View style={[styles.dFlex, { flex: 1, justifyContent: "center" }]}>
+          <Button
+            text={"Reply"}
+            type={"secondary"}
+            onPress={() => router.navigate("/replyReviews")}
+          ></Button>
+        </View>
+      </View>
+    );
+  };
+  return (
+    <ScrollView style={styles.scrollView}>
+      <View style={styles.container}>
+        <Text style={[styles.title]}>Reviews</Text>
+        <FlatList
+          data={reviews}
+          renderItem={({ item }) => renderItem(item)}
+          keyExtractor={(item) => item.id.toString()}
+        />
+      </View>
+    </ScrollView>
   );
 };
 const styles = StyleSheet.create({
@@ -275,12 +118,12 @@ const styles = StyleSheet.create({
   },
   container: {
     padding: 24,
-    flex: 1,
-    flexDirection: "row",
+    // flex: 1,
+    // flexDirection: "row",
     // marginTop: 50,
     // width: "50%",
-    gap: 25,
-    alignSelf: "center",
+    // gap: 25,
+    // alignSelf: "center",
   },
   heading: {
     marginBottom: 10,
@@ -293,7 +136,7 @@ const styles = StyleSheet.create({
     gap: 8,
     height: "100%",
     backgroundColor: SB_COLOR_SCHEME.SB_PRIMARY,
-    position: "absolute",
+    // position: "absolute",
     // width: "40%",
   },
   dFlex: {
@@ -323,8 +166,8 @@ const styles = StyleSheet.create({
   },
   userRow: {
     marginTop: 24,
-    width: 400,
-    justifyContent: "flex-end",
+    // width: 400,
+    // justifyContent: "flex-end",
   },
   userRate: {
     marginTop: 4,
@@ -342,6 +185,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flex: 1,
     alignItems: "flex-start",
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: "bold",
   },
 });
 
