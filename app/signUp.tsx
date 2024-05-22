@@ -40,7 +40,7 @@ export default function signUp() {
       Api.getApi().createRestaurant(createRestaurantInput);
       updateAuth(true, email, password);
       editDetail({
-        _id: "001",
+        id: "001",
         categories: [],
         name: restaurantName,
         address: "",
@@ -48,7 +48,10 @@ export default function signUp() {
         averageRating: 0,
         averageWaitTime: 0,
         description: "",
-        imageUrl: "",
+        imageURI: "",
+        email: email,
+        password: password,
+        menu: []
       });
       setAllMenu([]);
       router.navigate("/");

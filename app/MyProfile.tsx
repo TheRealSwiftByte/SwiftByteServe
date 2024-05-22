@@ -26,13 +26,16 @@ const MyProfile = () => {
 
   function getInitial(): string {
     const temp = details.name?.split(" ");
-    if (temp.length > 1) {
-      return `${temp[0].charAt(0).toUpperCase()}${temp[1]
-        .charAt(0)
-        .toUpperCase()}`;
-    } else {
-      return `${temp[0].charAt(0).toUpperCase()}`;
+    if (temp) {
+      if (temp.length > 1) {
+        return `${temp[0].charAt(0).toUpperCase()}${temp[1]
+          .charAt(0)
+          .toUpperCase()}`;
+      } else {
+        return `${temp[0].charAt(0).toUpperCase()}`;
+      }
     }
+    return "";
   }
 
   const handleSubmit = () => {
@@ -165,7 +168,7 @@ const MyProfile = () => {
           <View style={styles.details}>
             <Text style={[styles.label, { marginBottom: 10 }]}>Category</Text>
             <View style={{ flex: 1, flexDirection: "row" }}>
-              {categories.map((cat) => {
+              {categories?.map((cat) => {
                 return (
                   <Pressable
                     onPress={() =>
@@ -184,7 +187,8 @@ const MyProfile = () => {
                     ]}
                   >
                     <Text style={{ color: SB_COLOR_SCHEME.SB_SECONDARY }}>
-                    {cat.charAt(0).toUpperCase()}{cat.substring(1,).toLowerCase()}
+                      {cat.charAt(0).toUpperCase()}
+                      {cat.substring(1).toLowerCase()}
                     </Text>
                     <Close height={20} width={20} />
                   </Pressable>
@@ -197,7 +201,7 @@ const MyProfile = () => {
               {foodCategoriesArray
                 .filter((i) => {
                   if (
-                    categories.find((a) => a.toLowerCase() == i.toLowerCase())
+                    categories?.find((a) => a.toLowerCase() == i.toLowerCase())
                   ) {
                     return false;
                   } else {
@@ -217,7 +221,8 @@ const MyProfile = () => {
                       }
                     >
                       <Text style={{ color: SB_COLOR_SCHEME.SB_PRIMARY }}>
-                        {cat.charAt(0).toUpperCase()}{cat.substring(1,)}
+                        {cat.charAt(0).toUpperCase()}
+                        {cat.substring(1)}
                       </Text>
                       <Plus height={20} width={20} />
                     </Pressable>
