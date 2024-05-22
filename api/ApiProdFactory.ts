@@ -61,7 +61,7 @@ export class ApiProdFactory implements ApiImplementationFactory {
     async createRestaurant(restaurantInput: CreateRestaurantInput): Promise<Restaurant>{
         restaurantInput.menu = []
         restaurantInput.categories = [];
-        const response = fetch(API_BASE_URL + "customer/", {
+        const response = fetch(API_BASE_URL + "restaurant/", {
             method: 'POST',
             body: JSON.stringify(restaurantInput),
             headers: {

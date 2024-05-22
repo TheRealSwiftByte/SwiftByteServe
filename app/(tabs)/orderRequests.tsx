@@ -62,26 +62,40 @@ export default function OrderRequests() {
             }
         }
     }, [id]);*/
-  const updateOrderStatus = (
-    orderId: string,
-    newStatus: "pending" | "accepted" | "declined" | "completed"
-  ) => {
-    const updatedOrders = orderList.map((order) =>
-      order.id === orderId ? { ...order, status: newStatus } : order
-    );
-    setOrderList(updatedOrders);
-    Alert.alert(
-      `Order ${newStatus.charAt(0).toUpperCase() + newStatus.slice(1)}`,
-      `Order ${orderId} has been ${newStatus}.`
-    );
-  };
+  // const updateOrderStatus = (
+  //   orderId: string,
+  //   newStatus: "pending" | "accepted" | "declined" | "completed"
+  // ) => {
+  //   const updatedOrders = orderList.map((order) =>
+  //     order.id === orderId ? { ...order, status: newStatus } : order
+  //   );
+  //   setOrderList(updatedOrders);
+  //   Alert.alert(
+  //     `Order ${newStatus.charAt(0).toUpperCase() + newStatus.slice(1)}`,
+  //     `Order ${orderId} has been ${newStatus}.`
+  //   );
+  // };
 
   const handleAcceptOrder = (id: string) => {
-    updateOrderStatus(id, "accepted");
+    Api.getApi().updateOrder({
+      id: id,
+      orderStatus: "accepted",
+    }).then(() => {
+      Api.getApi().getOrdersByRestaurantId(restaurant.id).then((res) => {
+        setOrderList(res);
+      });
+    });
   };
 
   const handleRejectOrder = (id: string) => {
-    updateOrderStatus(id, "declined");
+    Api.getApi().updateOrder({
+      id: id,
+      orderStatus: "declined",
+    }).then(() => {
+      Api.getApi().getOrdersByRestaurantId(restaurant.id).then((res) => {
+        setOrderList(res);
+      });
+    });
   };
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -159,13 +173,13 @@ export default function OrderRequests() {
                   {item.id}
                 </Text>
                 <Text>
-                  {item.items.length} items | {item.customer.name} |{" "}
+                  {item.foodItems.length} items | {item.customer.firstName} |{" "}
                   {item.customer.phone}
                 </Text>
               </View>
             </View>
 
-            {item.status == "pending" ? (
+            {item.orderStatus == "pending" ? (
               <View
                 style={{
                   display: "flex",
@@ -237,10 +251,10 @@ export default function OrderRequests() {
         setValue={setValue}
         setItems={setItems}
       />
-      {value == "req" ? (
-        orders.filter((item) => item.status == "pending").length > 0 ? (
+      {value == "req" && orderList ? (
+        orderList.filter((item) => item.orderStatus == "pending").length > 0 ? (
           <FlatList
-            data={orders.filter((item) => item.status == "pending")}
+            data={orderList.filter((item) => item.orderStatus == "pending")}
             renderItem={({ item }) => renderItem(item)}
             keyExtractor={(item) => item.id.toString()}
             ItemSeparatorComponent={() => (
@@ -256,9 +270,10 @@ export default function OrderRequests() {
         ) : (
           <Text>You have no order requests.</Text>
         )
-      ) : orders.filter((item) => item.status == "accepted").length > 0 ? (
+      ) : 
+      orderList && orderList.filter((item) => item.orderStatus == "accepted").length > 0 ? (
         <FlatList
-          data={orders.filter((item) => item.status == "accepted")}
+          data={orderList.filter((item) => item.orderStatus == "accepted")}
           renderItem={({ item }) => renderItem(item)}
           keyExtractor={(item) => item.id.toString()}
           ItemSeparatorComponent={() => (

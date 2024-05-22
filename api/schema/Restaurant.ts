@@ -23,6 +23,7 @@ export type Restaurant = {
     id: string;
     categories: FoodCategory[];
     email: string;
+    imageURI?: string;
     password: string;
     name: string;
     address: string;
@@ -36,6 +37,7 @@ export type Restaurant = {
 export type CreateRestaurantInput = {
     name: string;
     address: string;
+    imageURI?: string;
     email: string;
     password: string;
     phone: string;
@@ -51,6 +53,7 @@ export type UpdateRestaurantInput = {
     address?: string;
     password?: string;
     email?: string;
+    imageURI?: string;
     phone?: string;
     description?: string;
     menu?: MenuItem[];

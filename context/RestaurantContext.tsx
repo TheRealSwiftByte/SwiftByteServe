@@ -1,31 +1,33 @@
 import { useRestaurant, useRestaurantReturn } from "@/hooks/useRestaurant";
 import React, { createContext, useState, useContext, useEffect } from "react";
+import { Api } from "@/api/api";
+import { Restaurant, MenuItem } from "@/api/schema/SwiftByteTypes";
 
-export interface FoodCategory {
-  id: number;
-  name: string;
-  imageUrl: string;
-}
+// export interface FoodCategory {
+//   id: number;
+//   name: string;
+//   imageUrl: string;
+// }
 
-export interface MenuItem {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  imageUrl: string;
-}
+// export interface MenuItem {
+//   id: string;
+//   name: string;
+//   description: string;
+//   price: number;
+//   imageUrl: string;
+// }
 
-export interface RestaurantDetails {
-  _id: string;
-  categories: FoodCategory[];
-  name: string;
-  address: string;
-  phone: string;
-  averageRating: number;
-  averageWaitTime: number;
-  description: string;
-  imageUrl: string;
-}
+// export interface RestaurantDetails {
+//   _id: string;
+//   categories: FoodCategory[];
+//   name: string;
+//   address: string;
+//   phone: string;
+//   averageRating: number;
+//   averageWaitTime: number;
+//   description: string;
+//   imageUrl: string;
+// }
 
 export const RestaurantContext = createContext<useRestaurantReturn>({
   auth: {
