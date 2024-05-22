@@ -1,6 +1,6 @@
 import { MenuItem } from "./SwiftByteTypes";
 
-enum FoodCategory {
+export enum FoodCategory {
     KOREAN = "korean",
     JAPANESE = "japanese",
     VIETNAMESE = "vietnamese",

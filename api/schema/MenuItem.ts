@@ -1,7 +1,7 @@
 
 import { Restaurant } from './SwiftByteTypes';
 
-enum MenuItemType {
+export enum MenuItemType {
     MAIN = "main",
     SIDE = "side",
     DRINK = "drink",
@@ -11,6 +11,7 @@ enum MenuItemType {
 }
 
 export type MenuItem = {
+    id: string;
     category: MenuItemType;
     name: string;
     price: number;
