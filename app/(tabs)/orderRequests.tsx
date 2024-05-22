@@ -8,24 +8,33 @@ import {
   FlatList,
   Pressable,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { Order, orders } from "@/mock_data";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { SB_COLOR_SCHEME } from "@/contstants";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import DropDownPicker from "react-native-dropdown-picker";
 import { Button } from "@swift-byte/switftbytecomponents";
+import { Api } from "@/api/api";
+import { Order } from "@/api/schema/SwiftByteTypes";
 
 export default function OrderRequests() {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("req");
+  const [restaurant, setRestaurant] = useState(Api.getApi().getActiveRestaurant());
   const [items, setItems] = useState([
     { label: "On Going", value: "ord" },
     { label: "Requests", value: "req" },
   ]);
-  const [orderList, setOrderList] = useState<Order[]>(orders);
+  const [orderList, setOrderList] = useState<Order[]>();
   const [order, setOrder] = useState<Order | undefined>();
+
+  useFocusEffect(useCallback(()=>{
+    setRestaurant(Api.getApi().getActiveRestaurant());
+    Api.getApi().getOrdersByRestaurantId(restaurant.id).then((res) => {
+      setOrderList(res);
+    });
+  }, []));
   /* const { id } = useLocalSearchParams<{id: string}>();
     const [order, setOrder] = useState<Order | undefined>();
     const [items, setItems] = useState<{ item: MenuItem | undefined; count: number }[]>([]);
@@ -53,26 +62,40 @@ export default function OrderRequests() {
             }
         }
     }, [id]);*/
-  const updateOrderStatus = (
-    orderId: string,
-    newStatus: "pending" | "accepted" | "declined" | "completed"
-  ) => {
-    const updatedOrders = orderList.map((order) =>
-      order.id === orderId ? { ...order, status: newStatus } : order
-    );
-    setOrderList(updatedOrders);
-    Alert.alert(
-      `Order ${newStatus.charAt(0).toUpperCase() + newStatus.slice(1)}`,
-      `Order ${orderId} has been ${newStatus}.`
-    );
-  };
+  // const updateOrderStatus = (
+  //   orderId: string,
+  //   newStatus: "pending" | "accepted" | "declined" | "completed"
+  // ) => {
+  //   const updatedOrders = orderList.map((order) =>
+  //     order.id === orderId ? { ...order, status: newStatus } : order
+  //   );
+  //   setOrderList(updatedOrders);
+  //   Alert.alert(
+  //     `Order ${newStatus.charAt(0).toUpperCase() + newStatus.slice(1)}`,
+  //     `Order ${orderId} has been ${newStatus}.`
+  //   );
+  // };
 
   const handleAcceptOrder = (id: string) => {
-    updateOrderStatus(id, "accepted");
+    Api.getApi().updateOrder({
+      id: id,
+      orderStatus: "accepted",
+    }).then(() => {
+      Api.getApi().getOrdersByRestaurantId(restaurant.id).then((res) => {
+        setOrderList(res);
+      });
+    });
   };
 
   const handleRejectOrder = (id: string) => {
-    updateOrderStatus(id, "declined");
+    Api.getApi().updateOrder({
+      id: id,
+      orderStatus: "declined",
+    }).then(() => {
+      Api.getApi().getOrdersByRestaurantId(restaurant.id).then((res) => {
+        setOrderList(res);
+      });
+    });
   };
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -150,13 +173,13 @@ export default function OrderRequests() {
                   {item.id}
                 </Text>
                 <Text>
-                  {item.items.length} items | {item.customer.name} |{" "}
+                  {item.foodItems.length} items | {item.customer.firstName} |{" "}
                   {item.customer.phone}
                 </Text>
               </View>
             </View>
 
-            {item.status == "pending" ? (
+            {item.orderStatus == "pending" ? (
               <View
                 style={{
                   display: "flex",
@@ -228,10 +251,10 @@ export default function OrderRequests() {
         setValue={setValue}
         setItems={setItems}
       />
-      {value == "req" ? (
-        orders.filter((item) => item.status == "pending").length > 0 ? (
+      {value == "req" && orderList ? (
+        orderList.filter((item) => item.orderStatus == "pending").length > 0 ? (
           <FlatList
-            data={orders.filter((item) => item.status == "pending")}
+            data={orderList.filter((item) => item.orderStatus == "pending")}
             renderItem={({ item }) => renderItem(item)}
             keyExtractor={(item) => item.id.toString()}
             ItemSeparatorComponent={() => (
@@ -247,9 +270,10 @@ export default function OrderRequests() {
         ) : (
           <Text>You have no order requests.</Text>
         )
-      ) : orders.filter((item) => item.status == "accepted").length > 0 ? (
+      ) : 
+      orderList && orderList.filter((item) => item.orderStatus == "accepted").length > 0 ? (
         <FlatList
-          data={orders.filter((item) => item.status == "accepted")}
+          data={orderList.filter((item) => item.orderStatus == "accepted")}
           renderItem={({ item }) => renderItem(item)}
           keyExtractor={(item) => item.id.toString()}
           ItemSeparatorComponent={() => (

@@ -2,6 +2,7 @@ import { ApiImplementationFactory } from "./ApiImplementationFactory";
 import { Api } from "./api.ts";
 import { CreateCustomerInput } from "./schema/Customer.ts";
 import { UpdateOrderInput } from "./schema/Order.ts";
+import { CreateRestaurantInput } from "./schema/Restaurant.ts";
 import {Restaurant, Order, Customer, Review} from "./schema/SwiftByteTypes.ts";
 
 
@@ -9,8 +10,8 @@ const API_BASE_URL = "https://hffwzvbzod.execute-api.ap-southeast-2.amazonaws.co
 
 export class ApiProdFactory implements ApiImplementationFactory {
 
-    getActiveCustomer(): Customer | undefined {
-        throw new Error("Method not implemented. (you shouldnt be here tho, getActiveCustomer in ApiProdFactory)");
+    getActiveRestaurant(): Restaurant | undefined {
+        throw new Error("Method not implemented. (you shouldnt be here tho, getActiveRestaurant in ApiProdFactory)");
     }
 
     //Restaurants
@@ -28,13 +29,51 @@ export class ApiProdFactory implements ApiImplementationFactory {
         }
     };
 
+    async getOrdersByRestaurantId(restaurantId: string): Promise<Order[] | undefined>{
+        try {
+            const response = await fetch(API_BASE_URL + "restaurant/fetch/?id=" + restaurantId);
+            const data = await response.json();
+            console.log("Data returned in request to getOrders: " + JSON.stringify(data));
+            for (const order of data) {
+                order.restaurant = await this.getRestaurant(order.restaurantId);
+            }
+            return data as Order[];
+        } catch (e) {
+            console.error("Failed to get orders: " + e);
+            return undefined;
+        }
+    }
+
     async getRestaurants(): Promise<Restaurant[] | undefined>{
         //stub
         return undefined;
     }
-    async createRestaurant(Restaurant: Restaurant): Promise<boolean>{
-        //stub
-        return false;
+    async signInRestaurant(email: string, password: string): Promise<Restaurant> {
+        const restaurant = await fetch(API_BASE_URL + "restaurant/SignIn?email=" + email + "&password=" + password)
+            .then(response => response.json())
+            .then(data => {
+                console.log("Data returned in request to signInRestaurant: " + JSON.stringify(data));
+                Api.getApi().setActiveRestaurant(data as Restaurant);
+                return data as Restaurant;
+            });
+    return restaurant;
+}
+    async createRestaurant(restaurantInput: CreateRestaurantInput): Promise<Restaurant>{
+        restaurantInput.menu = []
+        restaurantInput.categories = [];
+        const response = fetch(API_BASE_URL + "restaurant/", {
+            method: 'POST',
+            body: JSON.stringify(restaurantInput),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(response => response.json())
+        .then(data => {
+            console.log("Data returned in request to createRestaurant: " + JSON.stringify(data));
+            Api.getApi().setActiveRestaurant(data as Restaurant);
+            return data as Restaurant;
+        });
+        return response;
     };
 
     //orders
@@ -90,16 +129,6 @@ export class ApiProdFactory implements ApiImplementationFactory {
         }
     }
     
-    async signInCustomer(email: string, password: string): Promise<Customer> {
-            const customer = await fetch(API_BASE_URL + "customer/SignIn?email=" + email + "&password=" + password)
-                .then(response => response.json())
-                .then(data => {
-                    console.log("Data returned in request to signInCustomer: " + JSON.stringify(data));
-                    Api.getApi().setActiveCustomer(data as Customer);
-                    return data as Customer;
-                });
-            return customer;
-    }
     //customers
     async getCustomer(id: string): Promise<Customer | undefined>{
         try {
@@ -127,7 +156,7 @@ export class ApiProdFactory implements ApiImplementationFactory {
         }).then(response => response.json())
         .then(data => {
             console.log("Data returned in request to createCustomer: " + JSON.stringify(data));
-            Api.getApi().setActiveCustomer(data as Customer);
+            Api.getApi().setActiveRestaurant(data as Restaurant); //dw about this ;)
             return data as Customer;
         });
         return response;

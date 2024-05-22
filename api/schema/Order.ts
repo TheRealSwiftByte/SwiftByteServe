@@ -11,6 +11,7 @@ export interface OrderDetails {
 export type Order = {
     id: string
     customerId: string
+    customer: Customer
     restaurant: Restaurant
     foodItems: MenuItem[]
     orderStatus: "pending" | "accepted" | "declined" | "completed" | "cancelled" | "new" | "default" | "delivering" | "pendingDriver" //default is for an errored state, should be deprecated
@@ -23,6 +24,7 @@ export type Order = {
 
 export type CreateOrderInput = {
     customerId: string
+    customer: Customer
     restaurant: Restaurant
     foodItems: MenuItem[]
     orderStatus: "pending" | "accepted" | "declined" | "completed" | "cancelled" | "new" | "default" | "delivering" | "pendingDriver" //default is for an errored state, should be deprecated
@@ -35,6 +37,7 @@ export type CreateOrderInput = {
 export type UpdateOrderInput = {
     id?: string
     customerId?: string
+    customer?: Customer
     restaurant?: Restaurant
     foodItems?: MenuItem[]
     orderStatus?: "pending" | "accepted" | "declined" | "completed" | "cancelled" | "new" | "default" | "delivering" | "pendingDriver" //default is for an errored state, should be deprecated
