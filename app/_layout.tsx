@@ -81,6 +81,7 @@ function RootLayoutNav() {
           <Stack.Screen name="MenuModal" options={{ title: "Menu" }} />
           <Stack.Screen name="MyProfile" options={{ title: "My Profile" }} />
           <Stack.Screen name="modal" options={{ presentation: "modal" }} />
+          <Stack.Screen name="orderDetail" options={{ title: 'Order Detail' }} />
         </Stack>
       </RestaurantContextProvider>
     </ThemeProvider>

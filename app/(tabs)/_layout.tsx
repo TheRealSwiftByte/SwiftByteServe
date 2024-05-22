@@ -10,7 +10,7 @@ import IconOrders from "../../assets/icons/clipboard-outline.svg";
 import IconProfile from "../../assets/icons/storefront-outline.svg";
 import HomeIcon from "../../assets/icons/home-outline.svg";
 import ReviewIcon from "../../assets/icons/star-outline.svg";
-
+import HistoryIcon from "../../assets/icons/receipt-outline.svg";
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarIcon(props: {
@@ -43,8 +43,15 @@ export default function TabLayout() {
       <Tabs.Screen
         name="orderRequests"
         options={{
-          title: "Orders Requests",
+          title: "Orders",
           tabBarIcon: () => <IconOrders />,
+        }}
+      />
+      <Tabs.Screen
+        name="orderHistory"
+        options={{
+          title: "Order History",
+          tabBarIcon: () => <HistoryIcon />,
         }}
       />
       <Tabs.Screen
@@ -61,7 +68,6 @@ export default function TabLayout() {
           tabBarIcon: () => <IconProfile />,
         }}
       />
-      
     </Tabs>
   );
 }
