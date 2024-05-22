@@ -9,17 +9,19 @@ export interface ApiImplementationFactory {
     //Restaurants
     getRestaurant(id: string): Promise<Restaurant | undefined>;
     getRestaurants(): Promise<Restaurant[] | undefined>;
-    createRestaurant(Restaurant: UpdateRestaurantInput): Promise<boolean>;
+    createRestaurant(Restaurant: UpdateRestaurantInput): Promise<Restaurant>;
+    signInRestaurant(email: string, password: string): Promise<Restaurant>;
+    getActiveRestaurant(): Restaurant | undefined;
+    
 
     //orders
+    getOrdersByRestaurantId(restaurantId: string): Promise<Order[] | undefined>;
     getOrder(id: string): Promise<Order | undefined>;
     getOrders(customerId: string): Promise<Order[] | undefined>;
     createOrder(order: Order): Promise<boolean>;
     updateOrder(order: UpdateOrderInput): Promise<boolean>;
 
     //customers
-    signInCustomer(email: string, password: string): Promise<Customer>;
-    getActiveCustomer(): Customer | undefined;
     getCustomer(id: string): Promise<Customer | undefined>;
     getCustomers(): Promise<Customer[] | undefined>; //possibly unnecessary
     createCustomer(customerInput: CreateCustomerInput): Promise<Customer>;

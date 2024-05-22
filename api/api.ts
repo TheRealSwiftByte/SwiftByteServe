@@ -4,19 +4,24 @@ import { ApiProdFactory } from './ApiProdFactory';
 import { Customer, Order, Review, Restaurant } from './schema/SwiftByteTypes';
 import { CreateCustomerInput } from './schema/Customer';
 import { UpdateOrderInput } from './schema/Order';
+import { CreateRestaurantInput } from './schema/Restaurant';
 
 export class Api implements ApiImplementationFactory {
     private static _api: Api;
     private factory: ApiImplementationFactory;
 
-    private activeCustomer: Customer | undefined;
+    private activeRestaurant: Restaurant | undefined;
 
-    getActiveCustomer(): Customer {
-        if (Api.getApi().activeCustomer === undefined) throw new Error("No active customer");
-        return Api.getApi().activeCustomer || {} as Customer;
+
+    async getOrdersByRestaurantId(restaurantId: string): Promise<Order[] | undefined> {
+        return this.factory.getOrdersByRestaurantId(restaurantId);
     }
-    setActiveCustomer(customer: Customer): void {
-        Api.getApi().activeCustomer = customer;
+    getActiveRestaurant(): Restaurant {
+        if (Api.getApi().activeRestaurant === undefined) throw new Error("No active customer");
+        return Api.getApi().activeRestaurant || {} as Restaurant;
+    }
+    setActiveRestaurant(restaurant: Restaurant): void {
+        Api.getApi().activeRestaurant = restaurant;
     }
 
     constructor() {
@@ -31,13 +36,16 @@ export class Api implements ApiImplementationFactory {
     }
 
     //Restaurants
+    async signInRestaurant(email: string, password: string): Promise<Restaurant>{
+        return this.factory.signInRestaurant(email, password);
+    }
     public getRestaurant(id: string) {
         return this.factory.getRestaurant(id);
     }
     public getRestaurants() {
         return this.factory.getRestaurants();
     };
-    public createRestaurant(Restaurant: Restaurant){
+    public createRestaurant(Restaurant: CreateRestaurantInput){
         return this.factory.createRestaurant(Restaurant);
     }
 
@@ -56,9 +64,7 @@ export class Api implements ApiImplementationFactory {
     }
 
     //customers
-    async signInCustomer(email: string, password: string): Promise<Customer>{
-        return this.factory.signInCustomer(email, password);
-    }
+  
     public getCustomer(id: string) {
         return this.factory.getCustomer(id);
     }

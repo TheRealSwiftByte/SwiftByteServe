@@ -8,24 +8,33 @@ import {
   FlatList,
   Pressable,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { Order, orders } from "@/mock_data";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { SB_COLOR_SCHEME } from "@/contstants";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import DropDownPicker from "react-native-dropdown-picker";
 import { Button } from "@swift-byte/switftbytecomponents";
+import { Api } from "@/api/api";
+import { Order } from "@/api/schema/SwiftByteTypes";
 
 export default function OrderRequests() {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("req");
+  const [restaurant, setRestaurant] = useState(Api.getApi().getActiveRestaurant());
   const [items, setItems] = useState([
     { label: "On Going", value: "ord" },
     { label: "Requests", value: "req" },
   ]);
-  const [orderList, setOrderList] = useState<Order[]>(orders);
+  const [orderList, setOrderList] = useState<Order[]>();
   const [order, setOrder] = useState<Order | undefined>();
+
+  useFocusEffect(useCallback(()=>{
+    setRestaurant(Api.getApi().getActiveRestaurant());
+    Api.getApi().getOrdersByRestaurantId(restaurant.id).then((res) => {
+      setOrderList(res);
+    });
+  }, []));
   /* const { id } = useLocalSearchParams<{id: string}>();
     const [order, setOrder] = useState<Order | undefined>();
     const [items, setItems] = useState<{ item: MenuItem | undefined; count: number }[]>([]);

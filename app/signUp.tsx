@@ -13,6 +13,8 @@ import Logo from "../assets/images/logo-green.svg";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { SB_COLOR_SCHEME } from "@/contstants";
 import { RestaurantContext } from "@/context/RestaurantContext";
+import { Api } from "@/api/api";
+import { CreateRestaurantInput } from "@/api/schema/Restaurant";
 
 export default function signUp() {
   const { updateAuth, editDetail, setAllMenu } = useContext(RestaurantContext);
@@ -23,7 +25,19 @@ export default function signUp() {
   const [password, setPassword] = useState<string>("");
 
   const handleSignUp = () => {
-    if (name && restaurantName && parseInt(phone) && email && password) {
+    console.log('handling sign up')
+    if (restaurantName && parseInt(phone) && email && password) {
+      const createRestaurantInput: CreateRestaurantInput = {
+        name: restaurantName,
+        phone: phone,
+        email: email,
+        password: password,
+        menu: [],
+        description: "",
+        address: "",
+      };
+      console.log("restaurant inoutL : ", createRestaurantInput)
+      Api.getApi().createRestaurant(createRestaurantInput);
       updateAuth(true, email, password);
       editDetail({
         _id: "001",
@@ -55,42 +69,7 @@ export default function signUp() {
           >
             Sign Up
           </Text>
-          <View
-            style={[
-              styles.dFlex,
-              { alignItems: "flex-end", marginBottom: -10 },
-            ]}
-          >
-            <View
-              style={[
-                styles.dFlex,
-                { flexDirection: "column", alignItems: "flex-start" },
-              ]}
-            >
-              <Text style={styles.subtitle}>Name</Text>
-            </View>
-          </View>
-          <View
-            style={[
-              styles.dFlex,
-              {
-                borderRadius: 10,
-                borderWidth: 1,
-                borderColor: "#BBC5C1",
-                justifyContent: "space-between",
-              },
-            ]}
-          >
-            <View style={[styles.dFlex, { backgroundColor: "transparent" }]}>
-              <TextInput
-                value={name}
-                style={styles.textInput}
-                placeholder="Enter name"
-                placeholderTextColor={SB_COLOR_SCHEME.SB_DISABLED}
-                onChangeText={setName}
-              ></TextInput>
-            </View>
-          </View>
+
           <View
             style={[
               styles.dFlex,
