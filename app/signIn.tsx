@@ -33,6 +33,7 @@ export default function signIn() {
       editDetail({
         ...authorisedRestaurant
       });
+      console.log('res',authorisedRestaurant)
       setAllMenu(authorisedRestaurant.menu);
 
       router.navigate("/");

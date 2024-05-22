@@ -1,12 +1,33 @@
 import { ScrollView, StyleSheet, TouchableOpacity } from "react-native";
 
 import { Text, View } from "@/components/Themed";
-import { orders } from "@/mock_data";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import { Button } from "@swift-byte/switftbytecomponents";
 import { SB_COLOR_SCHEME } from "@/contstants";
+import { Order } from "@/api/schema/Order";
+import { useCallback, useState } from "react";
+import { Api } from "@/api/api";
 
 export default function orderHistory() {
+  const [orderHistory, setOrderHistory] = useState<Order[]>();
+  const [restaurant, setRestaurant] = useState(
+    Api.getApi().getActiveRestaurant()
+  );
+
+  useFocusEffect(
+    useCallback(() => {
+      try {
+        setRestaurant(Api.getApi().getActiveRestaurant());
+        Api.getApi()
+          .getOrdersByRestaurantId(restaurant.id)
+          .then((res) => {
+            setOrderHistory(res);
+          });
+      } catch (err) {
+        console.log(err);
+      }
+    }, [])
+  );
   return (
     <View style={styles.container}>
       <ScrollView style={{ backgroundColor: "white" }}>
@@ -17,55 +38,61 @@ export default function orderHistory() {
           darkColor="rgba(255,255,255,0.1)"
         />
         <View style={styles.listContainer}>
-          {orders
-            .filter((i) => i.status != "pending" && i.status != "accepted")
-            .map((item) => {
-              return (
-                <TouchableOpacity
-                  key={item.id}
-                  style={styles.item}
-                  onPress={() =>
-                    router.navigate({
-                      pathname: "/orderDetail",
-                      params: { id: item.id },
-                    })
-                  }
-                >
-                  <View style={{ backgroundColor: "transparent" }}>
-                    <Text>{item.restaurant.name}</Text>
-                    <Text>
-                      {item.eta.toLocaleTimeString()} |{"  "}
-                      {item.deliveryPerson.name}
-                    </Text>
-                  </View>
+          {orderHistory && orderHistory?.length > 0 ? (
+            orderHistory
+              ?.filter(
+                (i) => i.orderStatus != "pending" && i.orderStatus != "accepted"
+              )
+              .map((item) => {
+                return (
+                  <TouchableOpacity
+                    key={item.id}
+                    style={styles.item}
+                    onPress={() =>
+                      router.navigate({
+                        pathname: "/orderDetail",
+                        params: { id: item.id },
+                      })
+                    }
+                  >
+                    <View style={{ backgroundColor: "transparent" }}>
+                      <Text>{item.restaurant.name}</Text>
+                      <Text>
+                        {new Date(item.orderDate).toLocaleDateString()} |{"  "}
+                        {item.deliveryAddress}
+                      </Text>
+                    </View>
 
-                  <Button
-                    size="small"
-                    text={`${item.status
-                      .charAt(0)
-                      .toUpperCase()}${item.status.slice(1)}`}
-                    buttonStyle={{
-                      width: "10%",
-                      backgroundColor:
-                        item.status == "completed"
-                          ? SB_COLOR_SCHEME.SB_SECONDARY
-                          : item.status == "declined"
-                          ? SB_COLOR_SCHEME.SB_WARNING
-                          : SB_COLOR_SCHEME.SB_INFO,
-                      marginRight: 10,
-                    }}
-                    type={"primary"}
-                    onPress={() => {}}
-                    textStyle={{
-                      color:
-                        item.status == "declined"
-                          ? SB_COLOR_SCHEME.SB_SECONDARY
-                          : "white",
-                    }}
-                  />
-                </TouchableOpacity>
-              );
-            })}
+                    <Button
+                      size="small"
+                      text={`${item.orderStatus
+                        .charAt(0)
+                        .toUpperCase()}${item.orderStatus.slice(1)}`}
+                      buttonStyle={{
+                        width: "10%",
+                        backgroundColor:
+                          item.orderStatus == "completed"
+                            ? SB_COLOR_SCHEME.SB_SECONDARY
+                            : item.orderStatus == "declined"
+                            ? SB_COLOR_SCHEME.SB_WARNING
+                            : SB_COLOR_SCHEME.SB_INFO,
+                        marginRight: 10,
+                      }}
+                      type={"primary"}
+                      onPress={() => {}}
+                      textStyle={{
+                        color:
+                          item.orderStatus == "declined"
+                            ? SB_COLOR_SCHEME.SB_SECONDARY
+                            : "white",
+                      }}
+                    />
+                  </TouchableOpacity>
+                );
+              })
+          ) : (
+            <Text>You have no order history.</Text>
+          )}
         </View>
       </ScrollView>
     </View>

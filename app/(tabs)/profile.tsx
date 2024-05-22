@@ -1,32 +1,52 @@
 import { RestaurantContext } from "@/context/RestaurantContext";
-import React, { useContext, useState } from "react";
+import React, { useCallback, useContext, useState } from "react";
 import { View, Text, Pressable, StyleSheet, ScrollView } from "react-native";
 import { Avatar } from "react-native-elements";
 import * as ImagePicker from "expo-image-picker";
 import { SB_COLOR_SCHEME } from "@/contstants";
 import NextIcon from "../../assets/icons/chevron-forward-outline.svg";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
+import { Api } from "@/api/api";
 
 const Profile = () => {
   const { details, editDetail, auth, updateAuth } =
     useContext(RestaurantContext);
-  const [image, setImage] = useState<string>();
+  // const [image, setImage] = useState<string>();
 
-  function getInitial(): string {
-    const temp = details.name.split(" ");
-    if (temp.length > 1) {
-      return `${temp[0].charAt(0).toUpperCase()}${temp[1]
-        .charAt(0)
-        .toUpperCase()}`;
+  function getInitial(): any {
+    const temp = details.name?.split(" ");
+    if (temp) {
+      if (temp?.length > 1) {
+        return `${temp[0]?.charAt(0).toUpperCase()}${temp[1]
+          ?.charAt(0)
+          .toUpperCase()}`;
+      } else {
+        return `${temp[0]?.charAt(0).toUpperCase()}`;
+      }
     } else {
-      return `${temp[0].charAt(0).toUpperCase()}`;
+      return;
     }
   }
 
   const handleSignOut = () => {
     updateAuth(false, "", "");
-    router.navigate('/welcome')
+    router.navigate("/welcome");
   };
+
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     try {
+  //       setRestaurant(Api.getApi().getActiveRestaurant());
+  //       Api.getApi()
+  //         .getOrdersByRestaurantId(restaurant.id)
+  //         .then((res) => {
+  //           setOrderHistory(res);
+  //         });
+  //     } catch (err) {
+  //       console.log(err);
+  //     }
+  //   }, [])
+  // );
 
   return (
     <ScrollView>
@@ -34,8 +54,8 @@ const Profile = () => {
         <Avatar
           size="xlarge"
           rounded
-          source={{ uri: details.imageUrl }}
-          title={getInitial()}
+          source={{ uri: details?.imageURI }}
+          title={details ? getInitial() : ""}
           activeOpacity={0.7}
           containerStyle={{
             backgroundColor: SB_COLOR_SCHEME.SB_SECONDARY,
@@ -43,9 +63,9 @@ const Profile = () => {
           }}
         />
         <Text style={[styles.value, { fontWeight: "500", fontSize: 16 }]}>
-          {details.name}
+          {details?.name}
         </Text>
-        <Text style={styles.value}>{details.address}</Text>
+        <Text style={styles.value}>{details?.address}</Text>
         <Pressable
           style={[styles.item, { marginTop: 20, width: "50%" }]}
           onPress={() => router.navigate("/MyProfile")}

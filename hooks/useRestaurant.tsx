@@ -1,5 +1,7 @@
-import { MenuItem, RestaurantDetails } from "@/context/RestaurantContext";
+import { MenuItem, MenuItemType } from "@/api/schema/MenuItem";
+import { FoodCategory, Restaurant } from "@/api/schema/Restaurant";
 import { useEffect, useState } from "react";
+import { v4 } from "uuid";
 
 export interface useRestaurantReturn {
   auth: {
@@ -11,8 +13,8 @@ export interface useRestaurantReturn {
   addToMenu: (menuItem: MenuItem) => void;
   removeFromMenu: (menuItem: MenuItem) => void;
   editMenu: (id: string, editedItem: MenuItem) => void;
-  details: RestaurantDetails;
-  editDetail: (value: RestaurantDetails) => void;
+  details: Restaurant;
+  editDetail: (value: Restaurant) => void;
   updateAuth: (isLoggedIn: boolean, email: string, password: string) => void;
   setAllMenu: (menu: MenuItem[]) => void;
 }
@@ -20,58 +22,52 @@ export interface useRestaurantReturn {
 export const useRestaurant = (): useRestaurantReturn => {
   const [menu, setMenu] = useState<MenuItem[]>([
     {
-      id: "1",
-      name: "Pad Thai",
+      id: v4(),
+      category: MenuItemType.MAIN,
+      name: "Sashimi Platter",
+      price: 25.99,
       description:
-        "A stir-fried rice noodle dish commonly served as a street food and at most restaurants in Thailand.",
-      price: 10,
-      imageUrl:
-        "https://images.pexels.com/photos/628776/pexels-photo-628776.jpeg?auto=compress&cs=tinysrgb&w=800",
+        "A selection of fresh sashimi including tuna, salmon, and yellowtail.",
+      imagePath: "https://images.pexels.com/photos/3928854/pexels-photo-3928854.png?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+      isAvailable: true,
     },
     {
-      id: "2",
-      name: "Sushi",
-      description:
-        "A Japanese dish of prepared vinegared rice, usually with some sugar and salt, accompanying a variety of ingredients.",
-      price: 12,
-      imageUrl:
-        "https://images.pexels.com/photos/699953/pexels-photo-699953.jpeg?auto=compress&cs=tinysrgb&w=800",
+      id: v4(),
+      category: MenuItemType.DRINK,
+      name: "Green Tea",
+      price: 2.5,
+      description: "A refreshing cup of traditional Japanese green tea.",
+      imagePath: "https://images.pexels.com/photos/1279330/pexels-photo-1279330.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+      isAvailable: true,
     },
     {
-      id: "3",
-      name: "Kimchi",
-      description:
-        "A staple in Korean cuisine, made from salted and fermented vegetables, most commonly napa cabbage and Korean radishes.",
-      price: 8,
-      imageUrl:
-        "https://images.pexels.com/photos/1310777/pexels-photo-1310777.jpeg?auto=compress&cs=tinysrgb&w=800",
+      id: v4(),
+      category: MenuItemType.STARTER,
+      name: "Edamame",
+      price: 4.0,
+      description: "Boiled and salted edamame beans.",
+      imagePath: "https://images.pexels.com/photos/1279330/pexels-photo-1279330.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+      isAvailable: true,
     },
     {
-      id: "4",
-      name: "Pho",
+      id: v4(),
+      category: MenuItemType.DESSERT,
+      name: "Mochi Ice Cream",
+      price: 5.5,
       description:
-        "A Vietnamese soup consisting of broth, rice noodles, herbs, and meat, often served with bean sprouts and lime wedges.",
-      price: 12,
-      imageUrl:
-        "https://images.pexels.com/photos/2089712/pexels-photo-2089712.jpeg?auto=compress&cs=tinysrgb&w=800",
+        "Delicious mochi filled with creamy ice cream, available in various flavors.",
+      imagePath: "https://images.pexels.com/photos/1279330/pexels-photo-1279330.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+      isAvailable: true,
     },
     {
-      id: "5",
-      name: "Dim Sum",
+      id: v4(),
+      category: MenuItemType.POPULAR,
+      name: "California Roll",
+      price: 8.99,
       description:
-        "A style of Chinese cuisine prepared as small bite-sized portions of food served in small steamer baskets or on small plates.",
-      price: 16,
-      imageUrl:
-        "https://images.pexels.com/photos/2689419/pexels-photo-2689419.jpeg?auto=compress&cs=tinysrgb&w=800",
-    },
-    {
-      id: "6",
-      name: "Shezuan Chicken",
-      description:
-        "A style of Chinese cuisine prepared as small bite-sized portions of food served in small steamer baskets or on small plates.",
-      price: 18,
-      imageUrl:
-        "https://images.pexels.com/photos/3297882/pexels-photo-3297882.jpeg?auto=compress&cs=tinysrgb&w=800",
+        "A popular sushi roll with crab meat, avocado, and cucumber.",
+      imagePath: "https://images.pexels.com/photos/1279330/pexels-photo-1279330.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+      isAvailable: true,
     },
   ]);
   const [auth, setAuth] = useState<{
@@ -83,23 +79,69 @@ export const useRestaurant = (): useRestaurantReturn => {
     email: "",
     password: "",
   });
-  const [details, setDetails] = useState<RestaurantDetails>({
-    _id: "001",
-    categories: [
+  const [details, setDetails] = useState<Restaurant>({
+    id: v4(),
+    categories: [FoodCategory.JAPANESE, FoodCategory.ASIAN],
+    email: "info@sushiworld.com",
+    imageURI: "https://images.pexels.com/photos/67468/pexels-photo-67468.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+    password: "securepassword123",
+    name: "Sushi World",
+    address: "123 Sushi Lane, Tokyo, Japan",
+    phone: "+81-3-1234-5678",
+    averageRating: 4.7,
+    averageWaitTime: 15,
+    description:
+      "Sushi World offers the finest sushi made from the freshest ingredients. Enjoy a wide range of traditional and contemporary Japanese dishes in a modern setting.",
+    menu: [
       {
-        id: 7,
-        name: "Thailand",
-        imageUrl:
-          "https://images.pexels.com/photos/1132047/pexels-photo-1132047.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+        id: v4(),
+        category: MenuItemType.MAIN,
+        name: "Sashimi Platter",
+        price: 25.99,
+        description:
+          "A selection of fresh sashimi including tuna, salmon, and yellowtail.",
+        imagePath: "https://images.pexels.com/photos/3928854/pexels-photo-3928854.png?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+        isAvailable: true,
+      },
+      {
+        id: v4(),
+        category: MenuItemType.DRINK,
+        name: "Green Tea",
+        price: 2.5,
+        description: "A refreshing cup of traditional Japanese green tea.",
+        imagePath: "https://images.pexels.com/photos/1279330/pexels-photo-1279330.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+        isAvailable: true,
+      },
+      {
+        id: v4(),
+        category: MenuItemType.STARTER,
+        name: "Edamame",
+        price: 4.0,
+        description: "Boiled and salted edamame beans.",
+        imagePath: "https://images.pexels.com/photos/1279330/pexels-photo-1279330.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+        isAvailable: true,
+      },
+      {
+        id: v4(),
+        category: MenuItemType.DESSERT,
+        name: "Mochi Ice Cream",
+        price: 5.5,
+        description:
+          "Delicious mochi filled with creamy ice cream, available in various flavors.",
+        imagePath: "https://images.pexels.com/photos/1279330/pexels-photo-1279330.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+        isAvailable: true,
+      },
+      {
+        id: v4(),
+        category: MenuItemType.POPULAR,
+        name: "California Roll",
+        price: 8.99,
+        description:
+          "A popular sushi roll with crab meat, avocado, and cucumber.",
+        imagePath: "https://images.pexels.com/photos/1279330/pexels-photo-1279330.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+        isAvailable: true,
       },
     ],
-    name: "Kinn Thai",
-    address: "3 Crown St, Wollongong",
-    phone: "045678909",
-    averageRating: 4.5,
-    averageWaitTime: 48,
-    description: "Famous thai restaurant in Wollongong.",
-    imageUrl: "https://images.pexels.com/photos/12178096/pexels-photo-12178096.jpeg?auto=compress&cs=tinysrgb&w=800",
   });
 
   const addToMenu = (menuItem: MenuItem) => {
@@ -118,7 +160,7 @@ export const useRestaurant = (): useRestaurantReturn => {
     setMenu(menu.filter((item) => item.id !== menuItem.id));
   };
 
-  const editDetail = (value: RestaurantDetails) => {
+  const editDetail = (value: Restaurant) => {
     setDetails((prevValue) => value);
   };
 
@@ -134,8 +176,8 @@ export const useRestaurant = (): useRestaurantReturn => {
   };
 
   const setAllMenu = (menu: MenuItem[]) => {
-    setMenu(menu)
-  }
+    setMenu(menu);
+  };
 
   return {
     auth,
@@ -146,6 +188,6 @@ export const useRestaurant = (): useRestaurantReturn => {
     editDetail,
     editMenu,
     updateAuth,
-    setAllMenu
+    setAllMenu,
   };
 };
