@@ -55,7 +55,7 @@ const Profile = () => {
           size="xlarge"
           rounded
           source={{ uri: details?.imageURI }}
-          title={details ? getInitial() : ""}
+          title={details.name? getInitial() : ""}
           activeOpacity={0.7}
           containerStyle={{
             backgroundColor: SB_COLOR_SCHEME.SB_SECONDARY,

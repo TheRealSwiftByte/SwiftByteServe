@@ -23,20 +23,28 @@ export default function signIn() {
     useContext(RestaurantContext);
 
   const handleSubmit = async () => {
-    if (email  && password ) {
-      const authorisedRestaurant = await Api.getApi().signInRestaurant(email, password);
-      if (!authorisedRestaurant) {
-        alert("Invalid email or password");
-        return;
-      }
-      updateAuth(true, email, password);
-      editDetail({
-        ...authorisedRestaurant
-      });
-      console.log('res',authorisedRestaurant)
-      setAllMenu(authorisedRestaurant.menu);
+    if (email && password) {
+      try {
+        const authorisedRestaurant = await Api.getApi().signInRestaurant(
+          email,
+          password
+        );
+        console.log("res", authorisedRestaurant);
+        if (!authorisedRestaurant) {
+          alert("Invalid email or password");
+          return;
+        }
+        updateAuth(true, email, password);
+        editDetail({
+          ...authorisedRestaurant,
+        });
 
-      router.navigate("/");
+        setAllMenu(authorisedRestaurant.menu);
+
+        router.navigate("/");
+      } catch (err) {
+        console.log(err);
+      }
     }
   };
 
