@@ -100,6 +100,12 @@ export default function orderHistory() {
             </Text>
           </View>
           <View style={{ width: "100%", marginBottom: 8 }}>
+            <Text style={styles.subtitle}>Contact Information</Text>
+            <Text style={{ lineHeight: 25, marginTop: 8 }}>
+              {order?.customer.phone}
+            </Text>
+          </View>
+          <View style={{ width: "100%", marginBottom: 8 }}>
             <Text style={styles.subtitle}>Delivery Instruction</Text>
             <Text style={{ lineHeight: 25, marginTop: 8 }}>
               {order?.deliveryInstruction}
