@@ -4,6 +4,7 @@ import Logo from "../assets/images/logo-yellow.svg";
 import { Link, router } from "expo-router";
 import { Button } from "@swift-byte/switftbytecomponents";
 import { SB_COLOR_SCHEME } from "@/contstants";
+import WelcomeImage from "../assets/images/sb-welcome.svg";
 
 export default function welcome() {
   return (
@@ -12,6 +13,7 @@ export default function welcome() {
     >
       <View style={styles.container}>
         <Logo width={200} height={250} />
+        <WelcomeImage width={400} height={650}/>
         <View>
           <Button
             text={"Sign In"}

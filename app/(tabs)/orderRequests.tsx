@@ -3,15 +3,27 @@ import {
   StyleSheet,
   Text,
   View,
-  Button,
   Alert,
+  ScrollView,
+  FlatList,
+  Pressable,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { Order, orders } from "@/mock_data";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { SB_COLOR_SCHEME } from "@/contstants";
+import { router } from "expo-router";
+import DropDownPicker from "react-native-dropdown-picker";
+import { Button } from "@swift-byte/switftbytecomponents";
 
 export default function OrderRequests() {
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState("req");
+  const [items, setItems] = useState([
+    { label: "On Going", value: "ord" },
+    { label: "Requests", value: "req" },
+  ]);
   const [orderList, setOrderList] = useState<Order[]>(orders);
   const [order, setOrder] = useState<Order | undefined>();
   /* const { id } = useLocalSearchParams<{id: string}>();
@@ -77,127 +89,311 @@ export default function OrderRequests() {
     }
   };
 
-  return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
-      <KeyboardAwareScrollView style={styles.scrollView}>
-        <View style={[styles.container]}>
-          <View style={styles.rev}>
-            <View style={styles.page}>
-              <Text
+  const renderItem = (item: Order) => {
+    return (
+      <View
+        key={item.id}
+        style={[
+          styles.dFlex,
+          { marginBottom: 16, justifyContent: "space-between" },
+        ]}
+      >
+        <Pressable
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 16,
+            width: "100%",
+            padding: 15,
+            backgroundColor: "#f5f5f5",
+            borderRadius: 8,
+          }}
+          onPress={() =>
+            router.navigate({
+              pathname: "orderDetail",
+              params: {
+                id: item.id.toString(),
+              },
+            })
+          }
+        >
+          <View
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+              width: "100%",
+            }}
+          >
+            <View
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 20,
+              }}
+            >
+              <View
                 style={{
-                  fontSize: 24,
-                  fontWeight: "500",
-                  marginBottom: 20,
+                  width: 10,
+                  height: 10,
+                  borderRadius: 30,
+                  backgroundColor: SB_COLOR_SCHEME.SB_SECONDARY,
+                }}
+              ></View>
+              <View>
+                <Text
+                  style={{ fontSize: 16, fontWeight: "bold", marginBottom: 4 }}
+                >
+                  {item.id}
+                </Text>
+                <Text>
+                  {item.items.length} items | {item.customer.name} |{" "}
+                  {item.customer.phone}
+                </Text>
+              </View>
+            </View>
+
+            {item.status == "pending" ? (
+              <View
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: 10,
+                  justifyContent: "flex-end",
                 }}
               >
-                Order requests
-              </Text>
-              <View style={styles.lineView}>
-                <View style={styles.heading}>
-                  <Text style={[styles.title, styles.columnLarge]}>Order</Text>
-                  <Text
-                    style={[
-                      styles.title,
-                      styles.columnLarge,
-                      { marginLeft: -20 },
-                    ]}
-                  >
-                    Date and Time
-                  </Text>
-                  <Text
-                    style={[
-                      styles.title,
-                      styles.columnLarge,
-                      { marginLeft: 20 },
-                    ]}
-                  >
-                    Customer Name
-                  </Text>
-                  <Text
-                    style={[
-                      styles.title,
-                      styles.columnLarge,
-                      { marginLeft: 70 },
-                    ]}
-                  >
-                    Address
-                  </Text>
-                  <Text
-                    style={[styles.title, styles.column, { marginLeft: 70 }]}
-                  >
-                    Amount
-                  </Text>
-                  <Text
-                    style={[styles.title, styles.column, { marginLeft: 30 }]}
-                  >
-                    Status
-                  </Text>
-                  <Text
-                    style={[
-                      styles.title,
-                      styles.columnLarge,
-                      { marginRight: 15 },
-                    ]}
-                  >
-                    Action
-                  </Text>
-                </View>
+                <Button
+                  size="small"
+                  text={"Decline"}
+                  buttonStyle={{
+                    width: "20%",
+                    backgroundColor: "transparent",
+                    borderWidth: 1,
+                    borderColor: SB_COLOR_SCHEME.SB_WARNING,
+                    marginRight: 10,
+                  }}
+                  type={"primary"}
+                  onPress={() => handleRejectOrder(item.id)}
+                  textStyle={{ color: SB_COLOR_SCHEME.SB_WARNING }}
+                />
+                <Button
+                  size="small"
+                  text={"Accept"}
+                  buttonStyle={{ width: "20%" }}
+                  type={"secondary"}
+                  onPress={() => handleAcceptOrder(item.id)}
+                />
               </View>
-              {orderList.map((order) => (
-                <View style={styles.orderRow} key={order.id}>
-                  <Text style={[styles.value, styles.column]}>{order.id}</Text>
-                  <Text
-                    style={[styles.value, styles.column, { marginLeft: -10 }]}
-                  >
-                    {order.orderDate.toLocaleDateString()}
-                  </Text>
-                  <Text style={[styles.value, styles.column]}>
-                    {order.customer.name}
-                  </Text>
-                  <Text style={[styles.value, styles.columnLarge]}>
-                    {order.deliveryAddress}
-                  </Text>
-                  <Text style={[styles.value, styles.column]}>
-                    {order.total}
-                  </Text>
-                  <View
-                    style={[
-                      styles.statusButton,
-                      { borderColor: getStatusColor(order.status) },
-                      { marginLeft: -80 },
-                    ]}
-                  >
-                    <Text
-                      style={[
-                        styles.statusButtonText,
-                        { color: getStatusColor(order.status) },
-                      ]}
-                    >
-                      {order.status}
-                    </Text>
-                  </View>
-
-                  <View style={[styles.buttonContainer, styles.column]}>
-                    <Button
-                      title="Accept"
-                      onPress={() => handleAcceptOrder(order.id)}
-                      color="#FF9D2B"
-                      disabled={order.status !== "pending"}
-                    />
-                    <Button
-                      title="Decline"
-                      onPress={() => handleRejectOrder(order.id)}
-                      color="#EB5757"
-                      disabled={order.status !== "pending"}
-                    />
-                  </View>
-                </View>
-              ))}
-            </View>
+            ) : (
+              <View
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: 10,
+                  justifyContent: "flex-end",
+                }}
+              >
+                <Button
+                  size="small"
+                  text={"Complete"}
+                  buttonStyle={{ width: "20%" }}
+                  type={"secondary"}
+                  onPress={() => handleAcceptOrder(item.id)}
+                />
+              </View>
+            )}
           </View>
-        </View>
-      </KeyboardAwareScrollView>
-    </SafeAreaView>
+        </Pressable>
+
+        <Pressable style={{ marginRight: 20 }}></Pressable>
+      </View>
+    );
+  };
+
+  return (
+    <View style={styles.container}>
+      <Text style={[styles.title]}>Orders</Text>
+      <DropDownPicker
+        open={open}
+        value={value}
+        items={items}
+        containerStyle={{ width: 200 }}
+        dropDownContainerStyle={{ zIndex: 1 }}
+        setOpen={setOpen}
+        setValue={setValue}
+        setItems={setItems}
+      />
+      {value == "req" ? (
+        orders.filter((item) => item.status == "pending").length > 0 ? (
+          <FlatList
+            data={orders.filter((item) => item.status == "pending")}
+            renderItem={({ item }) => renderItem(item)}
+            keyExtractor={(item) => item.id.toString()}
+            ItemSeparatorComponent={() => (
+              <View
+                style={{
+                  borderBottomWidth: 1,
+                  borderBottomColor: "#d1d1d1",
+                  marginBottom: 16,
+                }}
+              ></View>
+            )}
+          />
+        ) : (
+          <Text>You have no order requests.</Text>
+        )
+      ) : orders.filter((item) => item.status == "accepted").length > 0 ? (
+        <FlatList
+          data={orders.filter((item) => item.status == "accepted")}
+          renderItem={({ item }) => renderItem(item)}
+          keyExtractor={(item) => item.id.toString()}
+          ItemSeparatorComponent={() => (
+            <View
+              style={{
+                borderBottomWidth: 1,
+                borderBottomColor: "#d1d1d1",
+                marginBottom: 16,
+              }}
+            ></View>
+          )}
+        />
+      ) : (
+        <Text>You have no on going orders.</Text>
+      )}
+    </View>
+    // <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
+    //   <KeyboardAwareScrollView style={styles.scrollView}>
+    //     <View style={[styles.container]}>
+    //       <View style={styles.rev}>
+    //         <View style={styles.page}>
+    //           <Text
+    //             style={{
+    //               fontSize: 24,
+    //               fontWeight: "500",
+    //               marginBottom: 20,
+    //             }}
+    //           >
+    //             Order requests
+    //           </Text>
+    //           <View style={{ flex: 1 }}>
+    //             <View style={{ flex: 1 }}>
+    //               <Text style={[styles.title]}>Order</Text>
+    //             </View>
+    //             <View style={{ flex: 1 }}>
+    //               <Text style={[styles.title]}>Date and Time</Text>
+    //             </View>
+    //           </View>
+    //           <View style={styles.lineView}>
+    //             <View style={styles.heading}>
+    //               <Text style={[styles.title, styles.columnLarge]}>Order</Text>
+    //               <Text
+    //                 style={[
+    //                   styles.title,
+    //                   styles.columnLarge,
+    //                   { marginLeft: -20 },
+    //                 ]}
+    //               >
+    //                 Date and Time
+    //               </Text>
+    //               <Text
+    //                 style={[
+    //                   styles.title,
+    //                   styles.columnLarge,
+    //                   { marginLeft: 20 },
+    //                 ]}
+    //               >
+    //                 Customer Name
+    //               </Text>
+    //               <Text
+    //                 style={[
+    //                   styles.title,
+    //                   styles.columnLarge,
+    //                   { marginLeft: 70 },
+    //                 ]}
+    //               >
+    //                 Address
+    //               </Text>
+    //               <Text
+    //                 style={[styles.title, styles.column, { marginLeft: 70 }]}
+    //               >
+    //                 Amount
+    //               </Text>
+    //               <Text
+    //                 style={[styles.title, styles.column, { marginLeft: 30 }]}
+    //               >
+    //                 Status
+    //               </Text>
+    //               <Text
+    //                 style={[
+    //                   styles.title,
+    //                   styles.columnLarge,
+    //                   { marginRight: 15 },
+    //                 ]}
+    //               >
+    //                 Action
+    //               </Text>
+    //             </View>
+    //           </View>
+    //           {orderList.map((order) => (
+    //             <View style={styles.orderRow} key={order.id}>
+    //               <Text style={[styles.value, styles.column]}>{order.id}</Text>
+    //               <Text
+    //                 style={[styles.value, styles.column, { marginLeft: -10 }]}
+    //               >
+    //                 {order.orderDate.toLocaleDateString()}
+    //               </Text>
+    //               <Text style={[styles.value, styles.column]}>
+    //                 {order.customer.name}
+    //               </Text>
+    //               <Text style={[styles.value, styles.columnLarge]}>
+    //                 {order.deliveryAddress}
+    //               </Text>
+    //               <Text style={[styles.value, styles.column]}>
+    //                 {order.total}
+    //               </Text>
+    //               <View
+    //                 style={[
+    //                   styles.statusButton,
+    //                   { borderColor: getStatusColor(order.status) },
+    //                   { marginLeft: -80 },
+    //                 ]}
+    //               >
+    //                 <Text
+    //                   style={[
+    //                     styles.statusButtonText,
+    //                     { color: getStatusColor(order.status) },
+    //                   ]}
+    //                 >
+    //                   {order.status}
+    //                 </Text>
+    //               </View>
+
+    //               <View style={[styles.buttonContainer, styles.column]}>
+    //                 <Button
+    //                   title="Accept"
+    //                   onPress={() => handleAcceptOrder(order.id)}
+    //                   color="#FF9D2B"
+    //                   disabled={order.status !== "pending"}
+    //                 />
+    //                 <Button
+    //                   title="Decline"
+    //                   onPress={() => handleRejectOrder(order.id)}
+    //                   color="#EB5757"
+    //                   disabled={order.status !== "pending"}
+    //                 />
+    //               </View>
+    //             </View>
+    //           ))}
+    //         </View>
+    //       </View>
+    //     </View>
+    //   </KeyboardAwareScrollView>
+    // </SafeAreaView>
   );
 }
 const styles = StyleSheet.create({
@@ -208,11 +404,12 @@ const styles = StyleSheet.create({
     padding: 32,
     flex: 1,
     flexDirection: "column",
-    marginTop: 50,
-    width: "80%",
+    backgroundColor: "white",
+    // marginTop: 50,
+    // width: "80%",
     gap: 25,
-    alignSelf: "center",
-    justifyContent: "center",
+    // alignSelf: "center",
+    // justifyContent: "center",
   },
   rev: {
     flex: 1,
@@ -237,14 +434,11 @@ const styles = StyleSheet.create({
     alignItems: "stretch",
     //gap: 40,
   },
-  title: {
-    flex: 2,
-    marginTop: 15,
-    marginRight: 24,
-    marginLeft: 10,
-    gap: 40,
-    fontWeight: "500",
-    color: "ACACAC",
+  dFlex: {
+    display: "flex",
+    flexDirection: "row",
+    gap: 30,
+    alignItems: "center",
   },
   lineView: {
     borderStyle: "solid",
@@ -306,5 +500,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: 100,
     height: 40,
+  },
+  separator: {
+    marginVertical: 30,
+    height: 1,
+    // width: "80%",
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: "bold",
   },
 });

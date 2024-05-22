@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { ScrollView, StyleSheet } from "react-native";
 import { Text, View } from "@/components/Themed";
 
 import {
@@ -11,8 +11,17 @@ import { Dimensions } from "react-native";
 import { SB_COLOR_SCHEME } from "@/contstants";
 import { useContext, useEffect, useState } from "react";
 import { RestaurantContext } from "@/context/RestaurantContext";
+import { Button } from "@swift-byte/switftbytecomponents";
+import DropDownPicker from "react-native-dropdown-picker";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function index() {
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState("3months");
+  const [items, setItems] = useState([
+    { label: "Last 3 months", value: "3months" },
+    { label: "Last 6 months", value: "6months" },
+  ]);
   const { menu } = useContext(RestaurantContext);
   const [data, setData] = useState<
     {
@@ -31,6 +40,25 @@ export default function index() {
       legendFontSize: 15,
     },
   ]);
+
+  const [revenueData, setRevenueData] = useState<{
+    labels: string[];
+    datasets: {
+      data: number[];
+      color: (opacity?: number) => string;
+      strokeWidth: number;
+    }[];
+  }>({
+    labels: ["January", "February", "March", "April"],
+    datasets: [
+      {
+        data: [0, 0, 0, 0],
+        color: (opacity = 1) => `rgba(134, 65, 244, ${opacity})`, // optional
+        strokeWidth: 2, // optional
+      },
+    ],
+  });
+
   const screenWidth = Dimensions.get("window").width;
   const chartConfig = {
     backgroundGradientFrom: "#1D3D30",
@@ -43,8 +71,8 @@ export default function index() {
     useShadowColorFromDataset: false, // optional
   };
 
-  function getRandomNumber(): number {
-    return Math.floor(Math.random() * (200 - 10 + 1)) + 10;
+  function getRandomNumber(max: number, min: number): number {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
   function generateData() {
@@ -60,7 +88,7 @@ export default function index() {
       const tmp = menu.slice(0, 5).map((item, i) => {
         return {
           name: item.name,
-          population: getRandomNumber(),
+          population: getRandomNumber(200, 10),
           color: color[i],
           legendFontColor: "#7F7F7F",
           legendFontSize: 15,
@@ -71,78 +99,151 @@ export default function index() {
     }
   }
 
+  function getLastMonths(numMonths: number) {
+    const monthNames = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
+    const today = new Date();
+    const result = [];
+
+    for (let i = 0; i < numMonths; i++) {
+      const month = new Date(
+        today.getFullYear(),
+        today.getMonth() - i,
+        1
+      ).getMonth();
+      result.push(monthNames[month]);
+    }
+
+    return result.reverse();
+  }
+
+  function generateRevenueData() {
+    const revenueData = {
+      labels: value == "3months" ? getLastMonths(3) : getLastMonths(6),
+      datasets: [
+        {
+          data:
+            value == "3months"
+              ? [
+                  getRandomNumber(200, 100),
+                  getRandomNumber(200, 100),
+                  getRandomNumber(200, 100),
+                ]
+              : [
+                  getRandomNumber(200, 100),
+                  getRandomNumber(200, 100),
+                  getRandomNumber(200, 100),
+                  getRandomNumber(200, 100),
+                  getRandomNumber(200, 100),
+                  getRandomNumber(200, 100),
+                ],
+          color: (opacity = 1) => `rgba(134, 65, 244, ${opacity})`, // optional
+          strokeWidth: 2, // optional
+        },
+      ],
+    };
+
+    setRevenueData(revenueData);
+  }
+
+  const exportReport = () => {};
+
   useEffect(() => {
     generateData();
-  }, []);
-
-  // const data = [
-  //   {
-  //     name: "Menu 1",
-  //     population: getRandomNumber(),
-  //     color: SB_COLOR_SCHEME.SB_PRIMARY,
-  //     legendFontColor: "#7F7F7F",
-  //     legendFontSize: 15,
-  //   },
-  //   {
-  //     name: "Menu 2",
-  //     population: getRandomNumber(),
-  //     color: SB_COLOR_SCHEME.SB_SECONDARY,
-  //     legendFontColor: "#7F7F7F",
-  //     legendFontSize: 15,
-  //   },
-  //   {
-  //     name: "Menu 3",
-  //     population: getRandomNumber(),
-  //     color: SB_COLOR_SCHEME.SB_TERTIARY,
-  //     legendFontColor: "#7F7F7F",
-  //     legendFontSize: 15,
-  //   },
-  //   {
-  //     name: "Menu 4",
-  //     population: getRandomNumber(),
-  //     color: "black",
-  //     legendFontColor: "#7F7F7F",
-  //     legendFontSize: 15,
-  //   },
-  //   {
-  //     name: "Menu 5",
-  //     population: getRandomNumber(),
-  //     color: SB_COLOR_SCHEME.SB_PRIMARY_LIGHT,
-  //     legendFontColor: "#7F7F7F",
-  //     legendFontSize: 15,
-  //   },
-  // ];
+    generateRevenueData();
+  }, [value, menu]);
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Order Statistics</Text>
-      <Text style={{ marginTop: 20 }}>Amount of order received per month</Text>
+    <ScrollView style={styles.container}>
+      <Text style={[styles.title]}>Revenue Report</Text>
+      <DropDownPicker
+        open={open}
+        value={value}
+        items={items}
+        containerStyle={{ width: 200, marginTop: 20 }}
+        dropDownContainerStyle={{ zIndex: 1 }}
+        setOpen={setOpen}
+        setValue={setValue}
+        setItems={setItems}
+      />
       <View
         style={styles.separator}
         lightColor="#eee"
         darkColor="rgba(255,255,255,0.1)"
       />
 
-      <PieChart
-        data={data}
-        width={screenWidth * 0.5}
-        height={220}
-        chartConfig={chartConfig}
-        accessor="population"
-        backgroundColor="transparent"
-        paddingLeft="15"
-        absolute
-      />
-    </View>
+      <View
+        style={{
+          flex: 1,
+          flexDirection: "row",
+          justifyContent: "flex-start",
+          paddingTop: 10,
+        }}
+      >
+        <View style={{ flex: 1 }}>
+          <Text style={{ marginBottom: 20 }}>
+            Amount of orders received per month based on menu
+          </Text>
+          <PieChart
+            data={data}
+            width={screenWidth * 0.5}
+            height={220}
+            chartConfig={chartConfig}
+            accessor="population"
+            backgroundColor="transparent"
+            paddingLeft="15"
+            absolute
+          />
+          <View>
+            <Text style={[styles.title, { marginTop: 20 }]}>Export Report</Text>
+            <Text style={{ marginVertical: 20 }}>
+              Export your revenue report for better future prediction and
+              decition making.
+            </Text>
+            <Button
+              text={"Export"}
+              buttonStyle={{ width: "20%" }}
+              type={"secondary"}
+              onPress={exportReport}
+            />
+          </View>
+        </View>
+        <View style={{ flex: 1 }}>
+          <Text style={{ marginBottom: 30 }}>
+            Amount of revenue received per month
+          </Text>
+          <LineChart
+            data={revenueData}
+            width={screenWidth * 0.4}
+            height={450}
+            chartConfig={chartConfig}
+          />
+        </View>
+      </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
+    // alignItems: "center",
+    // justifyContent: "center",
     padding: 32,
+    backgroundColor: "white",
+    width: "100%",
   },
   title: {
     fontSize: 20,
@@ -151,6 +252,6 @@ const styles = StyleSheet.create({
   separator: {
     marginVertical: 30,
     height: 1,
-    width: "80%",
+    // width: "80%",
   },
 });

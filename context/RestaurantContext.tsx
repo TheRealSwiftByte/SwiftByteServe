@@ -51,6 +51,7 @@ export const RestaurantContext = createContext<useRestaurantReturn>({
   editDetail: () => {},
   editMenu: () => {},
   updateAuth: () => {},
+
 });
 
 export function RestaurantContextProvider({ children }: any) {
