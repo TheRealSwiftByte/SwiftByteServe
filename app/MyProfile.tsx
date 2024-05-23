@@ -12,6 +12,7 @@ import Plus from "../assets/icons/plus.svg";
 import Close from "../assets/icons/close-outline.svg";
 import { categories_data } from "@/mock_data";
 import { FoodCategory } from "@/api/schema/Restaurant";
+import { Api } from "@/api/api";
 
 const MyProfile = () => {
   const { details, editDetail } = useContext(RestaurantContext);
@@ -39,6 +40,13 @@ const MyProfile = () => {
   }
 
   const handleSubmit = () => {
+    const images = [
+      "https://images.pexels.com/photos/1267320/pexels-photo-1267320.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+      "https://images.pexels.com/photos/1058277/pexels-photo-1058277.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+      "https://images.pexels.com/photos/262047/pexels-photo-262047.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+      "https://images.pexels.com/photos/761854/pexels-photo-761854.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+    ];
+
     console.log(name, phone, address, description);
     if (!(name && phone && address && description)) {
       return;
@@ -47,7 +55,7 @@ const MyProfile = () => {
     console.log("categories", categories);
 
     try {
-      editDetail({
+      const updated = {
         id: details.id,
         name,
         description,
@@ -60,9 +68,13 @@ const MyProfile = () => {
         menu: details.menu,
         email: details.email,
         password: details.password,
-      });
+      };
+      // const response = Api.getApi().updateRestaurant(updated);
+      console.log("update response", updated);
+      editDetail(updated);
     } catch (err) {
       console.log(err);
+      return;
     }
 
     router.navigate("/profile");
@@ -73,7 +85,35 @@ const MyProfile = () => {
   }
 
   useEffect(() => {
-    console.log(categories);
+    async function fetch() {
+      try {
+        const restaurant = await Api.getApi().getRestaurant(
+          Api.getApi().getActiveRestaurant().id
+        );
+        if (restaurant) {
+          console.log(restaurant);
+          setName(restaurant.name);
+          setAddress(restaurant.address);
+          setPhone(restaurant.phone);
+          setDescription(restaurant.description);
+          setCategories(restaurant.categories);
+          setImage(restaurant?.imageURI as string);
+        } else {
+          console.log(restaurant);
+          setName(details.name);
+          setAddress(details.address);
+          setPhone(details.phone);
+          setDescription(details.description);
+          setCategories(details.categories);
+          setImage(details?.imageURI as string);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    }
+
+    // fetch();
+    console.log(details);
     setName(details.name);
     setAddress(details.address);
     setPhone(details.phone);

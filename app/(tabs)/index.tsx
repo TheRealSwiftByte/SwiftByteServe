@@ -206,7 +206,7 @@ export default function index() {
             <Text style={[styles.title, { marginTop: 20 }]}>Export Report</Text>
             <Text style={{ marginVertical: 20 }}>
               Export your revenue report for better future prediction and
-              decition making.
+              decision making.
             </Text>
             <Button
               text={"Export"}

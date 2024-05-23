@@ -37,7 +37,7 @@ export default function MyMenu() {
             router.navigate({
               pathname: "MenuModal",
               params: {
-                menuItemId: item.id.toString(),
+                menuItemId: item?.name,
               },
             })
           }
@@ -112,7 +112,7 @@ export default function MyMenu() {
       <FlatList
         data={menu}
         renderItem={({ item }) => renderItem(item)}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item) => item?.name?.toString()}
         ItemSeparatorComponent={() => (
           <View
             style={{

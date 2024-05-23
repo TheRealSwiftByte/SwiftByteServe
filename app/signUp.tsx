@@ -24,7 +24,7 @@ export default function signUp() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
-  const handleSignUp = () => {
+  const handleSignUp = async () => {
     console.log('handling sign up')
     if (restaurantName && parseInt(phone) && email && password) {
       const createRestaurantInput: CreateRestaurantInput = {
@@ -37,14 +37,14 @@ export default function signUp() {
         address: "",
       };
       console.log("restaurant inoutL : ", createRestaurantInput)
-      Api.getApi().createRestaurant(createRestaurantInput);
+      const res = await Api.getApi().createRestaurant(createRestaurantInput);
       updateAuth(true, email, password);
       editDetail({
-        id: "001",
+        id: res.id,
         categories: [],
         name: restaurantName,
         address: "",
-        phone: "",
+        phone: res.phone,
         averageRating: 0,
         averageWaitTime: 0,
         description: "",

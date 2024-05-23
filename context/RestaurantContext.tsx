@@ -40,7 +40,7 @@ export const RestaurantContext = createContext<useRestaurantReturn>({
   setAllMenu: () => {},
   removeFromMenu: () => {},
   details: {
-    _id: "",
+    id: "",
     categories: [],
     name: "",
     address: "",
@@ -48,7 +48,10 @@ export const RestaurantContext = createContext<useRestaurantReturn>({
     averageRating: 0,
     averageWaitTime: 0,
     description: "",
-    imageUrl: "",
+    imageURI: "",
+    email: '',
+    password: '',
+    menu: []
   },
   editDetail: () => {},
   editMenu: () => {},

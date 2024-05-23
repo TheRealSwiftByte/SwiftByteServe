@@ -12,6 +12,7 @@ export interface ApiImplementationFactory {
     createRestaurant(Restaurant: UpdateRestaurantInput): Promise<Restaurant>;
     signInRestaurant(email: string, password: string): Promise<Restaurant>;
     getActiveRestaurant(): Restaurant | undefined;
+    updateRestaurant(restaurant: Restaurant): Promise<Restaurant | undefined>;
     
 
     //orders

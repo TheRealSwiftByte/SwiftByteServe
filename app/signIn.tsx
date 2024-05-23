@@ -38,6 +38,7 @@ export default function signIn() {
         editDetail({
           ...authorisedRestaurant,
         });
+        console.log('menu', authorisedRestaurant.menu)
 
         setAllMenu(authorisedRestaurant.menu);
 

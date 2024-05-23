@@ -41,10 +41,11 @@ export default function MenuModal() {
   };
 
   useEffect(() => {
+    console.log('menu', menu, menuItemId)
     setItems(generateLabelValuePairs(MenuItemType));
     if (menuItemId) {
       console.log("edit!");
-      const item = menu.find((i) => i.id == menuItemId);
+      const item = menu.find((i) => i.name == menuItemId);
       if (item) {
         setImage(item?.imagePath);
         setName(item?.name);

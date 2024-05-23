@@ -20,56 +20,7 @@ export interface useRestaurantReturn {
 }
 
 export const useRestaurant = (): useRestaurantReturn => {
-  const [menu, setMenu] = useState<MenuItem[]>([
-    {
-      id: v4(),
-      category: MenuItemType.MAIN,
-      name: "Sashimi Platter",
-      price: 25.99,
-      description:
-        "A selection of fresh sashimi including tuna, salmon, and yellowtail.",
-      imagePath: "https://images.pexels.com/photos/3928854/pexels-photo-3928854.png?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-      isAvailable: true,
-    },
-    {
-      id: v4(),
-      category: MenuItemType.DRINK,
-      name: "Green Tea",
-      price: 2.5,
-      description: "A refreshing cup of traditional Japanese green tea.",
-      imagePath: "https://images.pexels.com/photos/1279330/pexels-photo-1279330.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-      isAvailable: true,
-    },
-    {
-      id: v4(),
-      category: MenuItemType.STARTER,
-      name: "Edamame",
-      price: 4.0,
-      description: "Boiled and salted edamame beans.",
-      imagePath: "https://images.pexels.com/photos/1279330/pexels-photo-1279330.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-      isAvailable: true,
-    },
-    {
-      id: v4(),
-      category: MenuItemType.DESSERT,
-      name: "Mochi Ice Cream",
-      price: 5.5,
-      description:
-        "Delicious mochi filled with creamy ice cream, available in various flavors.",
-      imagePath: "https://images.pexels.com/photos/1279330/pexels-photo-1279330.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-      isAvailable: true,
-    },
-    {
-      id: v4(),
-      category: MenuItemType.POPULAR,
-      name: "California Roll",
-      price: 8.99,
-      description:
-        "A popular sushi roll with crab meat, avocado, and cucumber.",
-      imagePath: "https://images.pexels.com/photos/1279330/pexels-photo-1279330.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-      isAvailable: true,
-    },
-  ]);
+  const [menu, setMenu] = useState<MenuItem[]>([]);
   const [auth, setAuth] = useState<{
     isLoggedIn: boolean;
     email: string;
@@ -92,56 +43,7 @@ export const useRestaurant = (): useRestaurantReturn => {
     averageWaitTime: 15,
     description:
       "Sushi World offers the finest sushi made from the freshest ingredients. Enjoy a wide range of traditional and contemporary Japanese dishes in a modern setting.",
-    menu: [
-      {
-        id: v4(),
-        category: MenuItemType.MAIN,
-        name: "Sashimi Platter",
-        price: 25.99,
-        description:
-          "A selection of fresh sashimi including tuna, salmon, and yellowtail.",
-        imagePath: "https://images.pexels.com/photos/3928854/pexels-photo-3928854.png?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-        isAvailable: true,
-      },
-      {
-        id: v4(),
-        category: MenuItemType.DRINK,
-        name: "Green Tea",
-        price: 2.5,
-        description: "A refreshing cup of traditional Japanese green tea.",
-        imagePath: "https://images.pexels.com/photos/1279330/pexels-photo-1279330.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-        isAvailable: true,
-      },
-      {
-        id: v4(),
-        category: MenuItemType.STARTER,
-        name: "Edamame",
-        price: 4.0,
-        description: "Boiled and salted edamame beans.",
-        imagePath: "https://images.pexels.com/photos/1279330/pexels-photo-1279330.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-        isAvailable: true,
-      },
-      {
-        id: v4(),
-        category: MenuItemType.DESSERT,
-        name: "Mochi Ice Cream",
-        price: 5.5,
-        description:
-          "Delicious mochi filled with creamy ice cream, available in various flavors.",
-        imagePath: "https://images.pexels.com/photos/1279330/pexels-photo-1279330.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-        isAvailable: true,
-      },
-      {
-        id: v4(),
-        category: MenuItemType.POPULAR,
-        name: "California Roll",
-        price: 8.99,
-        description:
-          "A popular sushi roll with crab meat, avocado, and cucumber.",
-        imagePath: "https://images.pexels.com/photos/1279330/pexels-photo-1279330.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-        isAvailable: true,
-      },
-    ],
+    menu: [],
   });
 
   const addToMenu = (menuItem: MenuItem) => {
@@ -157,7 +59,7 @@ export const useRestaurant = (): useRestaurantReturn => {
   };
 
   const removeFromMenu = (menuItem: MenuItem) => {
-    setMenu(menu.filter((item) => item.id !== menuItem.id));
+    setMenu(menu.filter((item) => item.name !== menuItem.name));
   };
 
   const editDetail = (value: Restaurant) => {
@@ -166,7 +68,7 @@ export const useRestaurant = (): useRestaurantReturn => {
 
   const editMenu = (id: string, editedItem: MenuItem) => {
     const newMenu: MenuItem[] = menu.map((i) => {
-      if (i.id == id) {
+      if (i.name == id) {
         return editedItem;
       }
       return i;
@@ -191,3 +93,54 @@ export const useRestaurant = (): useRestaurantReturn => {
     setAllMenu,
   };
 };
+
+// [
+//   {
+//     id: v4(),
+//     category: MenuItemType.MAIN,
+//     name: "Sashimi Platter",
+//     price: 25.99,
+//     description:
+//       "A selection of fresh sashimi including tuna, salmon, and yellowtail.",
+//     imagePath: "https://images.pexels.com/photos/3928854/pexels-photo-3928854.png?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+//     isAvailable: true,
+//   },
+//   {
+//     id: v4(),
+//     category: MenuItemType.DRINK,
+//     name: "Green Tea",
+//     price: 2.5,
+//     description: "A refreshing cup of traditional Japanese green tea.",
+//     imagePath: "https://images.pexels.com/photos/3090274/pexels-photo-3090274.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+//     isAvailable: true,
+//   },
+//   {
+//     id: v4(),
+//     category: MenuItemType.STARTER,
+//     name: "Edamame",
+//     price: 4.0,
+//     description: "Boiled and salted edamame beans.",
+//     imagePath: "https://images.pexels.com/photos/1860193/pexels-photo-1860193.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+//     isAvailable: true,
+//   },
+//   {
+//     id: v4(),
+//     category: MenuItemType.DESSERT,
+//     name: "Mochi Ice Cream",
+//     price: 5.5,
+//     description:
+//       "Delicious mochi filled with creamy ice cream, available in various flavors.",
+//     imagePath: "https://images.pexels.com/photos/1279330/pexels-photo-1279330.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+//     isAvailable: true,
+//   },
+//   {
+//     id: v4(),
+//     category: MenuItemType.POPULAR,
+//     name: "California Roll",
+//     price: 8.99,
+//     description:
+//       "A popular sushi roll with crab meat, avocado, and cucumber.",
+//     imagePath: "https://images.pexels.com/photos/1279330/pexels-photo-1279330.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+//     isAvailable: true,
+//   },
+// ]

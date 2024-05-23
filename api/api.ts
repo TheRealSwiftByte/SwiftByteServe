@@ -48,6 +48,9 @@ export class Api implements ApiImplementationFactory {
     public createRestaurant(Restaurant: CreateRestaurantInput){
         return this.factory.createRestaurant(Restaurant);
     }
+    public updateRestaurant(restaurant: Restaurant) {
+        return this.factory.updateRestaurant(restaurant);
+    }
 
     //orders
     public getOrder(id: string) {
@@ -76,7 +79,6 @@ export class Api implements ApiImplementationFactory {
     }
     public updateCustomer(customer: Customer) {
         return this.factory.updateCustomer(customer);
-    
     }
 
     //reviews

@@ -126,7 +126,7 @@ const Review = () => {
         <FlatList
           data={reviewList}
           renderItem={({ item }) => renderItem(item)}
-          keyExtractor={(item) => item.id.toString()}
+          keyExtractor={(item) => item?.id?.toString()}
         />
         {reviewList?.length == 0 ? (
           <Text style={{ marginTop: 30 }}>You have no reviews.</Text>
