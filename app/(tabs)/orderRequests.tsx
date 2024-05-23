@@ -282,7 +282,7 @@ export default function OrderRequests() {
           <FlatList
             data={orderList.filter((item) => item.orderStatus == "pending")}
             renderItem={({ item }) => renderItem(item)}
-            keyExtractor={(item) => item.id.toString()}
+            keyExtractor={(item) => item?.id?.toString()}
             ItemSeparatorComponent={() => (
               <View
                 style={{
@@ -302,7 +302,7 @@ export default function OrderRequests() {
         <FlatList
           data={orderList.filter((item) => item.orderStatus == "accepted")}
           renderItem={({ item }) => renderItem(item)}
-          keyExtractor={(item) => item.id.toString()}
+          keyExtractor={(item) => item?.id?.toString()}
           ItemSeparatorComponent={() => (
             <View
               style={{
