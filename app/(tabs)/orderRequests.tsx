@@ -86,6 +86,7 @@ export default function OrderRequests() {
   // };
 
   const handleAcceptOrder = (id: string) => {
+    console.log("handleAcceptOrder: ", id)
     try {
       Api.getApi()
         .updateOrder({
@@ -162,7 +163,7 @@ export default function OrderRequests() {
             router.navigate({
               pathname: "orderDetail",
               params: {
-                id: item.id.toString(),
+                id: item.id,
               },
             })
           }
@@ -282,7 +283,7 @@ export default function OrderRequests() {
           <FlatList
             data={orderList.filter((item) => item.orderStatus == "pending")}
             renderItem={({ item }) => renderItem(item)}
-            keyExtractor={(item) => item?.id?.toString()}
+            keyExtractor={(item) => item.id}
             ItemSeparatorComponent={() => (
               <View
                 style={{

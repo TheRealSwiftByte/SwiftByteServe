@@ -1,9 +1,10 @@
 import { SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
-import React, { useEffect, useState } from "react";
-import { MenuItem, Order, orders } from "@/mock_data";
-import { useLocalSearchParams } from "expo-router";
+import React, { useCallback, useEffect, useState } from "react";
+import { MenuItem, Order } from "@/api/schema/SwiftByteTypes";
+import { useFocusEffect, useLocalSearchParams } from "expo-router";
 import { Button } from "@swift-byte/switftbytecomponents";
 import { SB_COLOR_SCHEME } from "@/contstants";
+import { Api } from "@/api/api";
 
 export default function orderHistory() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -15,34 +16,29 @@ export default function orderHistory() {
     }[]
   >();
 
+  useFocusEffect(useCallback(()=>{
+    Api.getApi().getOrder(id).then(()=>{
+      console.log("order", order)
+      setOrder(order)
+      if (order?.foodItems){
+        setItems(order?.foodItems)
+      }
+    })
+  }, []))
+
+  useEffect(() => {
+    //TODO: double check this logic, I don't thiiiink its working
+    if (order) {
+      order.foodItems.forEach((item) => {
+        item.quantity = item.quantity || 1
+      });
+    }
+  }, [order]);
+
   const handleAcceptOrder = (id: string) => {};
 
   const handleRejectOrder = (id: string) => {};
 
-  useEffect(() => {
-    if (id) {
-      console.log("id", id);
-      const ord = orders.find((item) => item.id == id);
-      setOrder(ord);
-      const itemIdCounts: { [itemId: string]: number } = {};
-
-      ord?.items.forEach((item) => {
-        const itemId = item.id.toString();
-        itemIdCounts[itemId] = (itemIdCounts[itemId] || 0) + 1;
-      });
-
-      const temp: {
-        item: MenuItem | undefined;
-        count: number;
-      }[] = Object.keys(itemIdCounts).map((itemId) => ({
-        item: ord?.items.find((i) => i.id == itemId),
-        count: itemIdCounts[itemId],
-      }));
-
-      setItems(temp);
-      console.log(temp, order);
-    }
-  }, []);
 
   return (
     <SafeAreaView style={{ height: "100%" }}>
@@ -63,21 +59,18 @@ export default function orderHistory() {
               <Text style={styles.subtitle}>Restaurant</Text>
               <Text style={{ marginTop: 8 }}>{order?.restaurant.name}</Text>
               <Text style={{ lineHeight: 25 }}>
-                {order?.restaurant.address.street},{" "}
-                {order?.restaurant.address.city},{" "}
-                {order?.restaurant.address.state},{" "}
-                {order?.restaurant.address.zipCode}
+                {order?.restaurant.address},{" "}
               </Text>
             </View>
             <Button
               size="small"
-              text={order ? order?.status.toUpperCase() : ""}
+              text={order ? order?.orderStatus.toUpperCase() : ""}
               buttonStyle={{
                 width: "10%",
                 backgroundColor:
-                  order?.status == "completed"
+                  order?.orderStatus == "completed"
                     ? SB_COLOR_SCHEME.SB_SECONDARY
-                    : order?.status == "declined"
+                    : order?.orderStatus == "declined"
                     ? SB_COLOR_SCHEME.SB_WARNING
                     : SB_COLOR_SCHEME.SB_PRIMARY,
                 marginRight: 10,
@@ -86,7 +79,7 @@ export default function orderHistory() {
               onPress={() => {}}
               textStyle={{
                 color:
-                  order?.status == "completed"
+                  order?.orderStatus == "completed"
                     ? SB_COLOR_SCHEME.SB_PRIMARY
                     : SB_COLOR_SCHEME.SB_SECONDARY,
               }}
@@ -116,7 +109,7 @@ export default function orderHistory() {
             <View>
               {items?.map((item) => {
                 return (
-                  <View key={item.item?.id} style={styles.summaryItem}>
+                  <View key={item.item?.name} style={styles.summaryItem}>
                     <Text style={{ color: "black" }}>
                       {item.count}x {item.item?.name}
                     </Text>
@@ -132,21 +125,21 @@ export default function orderHistory() {
               <View style={styles.summaryItem}>
                 <Text style={{ color: "black" }}>Delivery Fee</Text>
                 <Text style={{ color: "black" }}>
-                  ${((order?.netTotal ?? 0) * 0.05).toFixed(2)}
+                  ${((order?.totalPrice ?? 0) * 0.05).toFixed(2)}
                 </Text>
               </View>
-              <View style={styles.summaryItem}>
+              {/* <View style={styles.summaryItem}>
                 <Text style={{ color: "black" }}>VAT</Text>
                 <Text style={{ color: "black" }}>${order?.tax.toFixed(2)}</Text>
-              </View>
-              <View
+              </View> */}
+              {/* <View
                 style={
                   order?.promoCode ? styles.summaryItem : { display: "none" }
                 }
               >
                 <Text style={{ color: "black" }}>Coupon</Text>
                 <Text style={{ color: "black" }}>-${order?.discount}</Text>
-              </View>
+              </View> */}
               <View style={[styles.summaryItem, { borderBottomWidth: 0 }]}>
                 <Text
                   style={{
@@ -164,12 +157,12 @@ export default function orderHistory() {
                     fontSize: 16,
                   }}
                 >
-                  ${order?.netTotal}
+                  ${order?.totalPrice}
                 </Text>
               </View>
             </View>
           </View>
-          {order?.status == "pending" ? (
+          {order?.orderStatus == "pending" ? (
             <View
               style={{
                 display: "flex",
