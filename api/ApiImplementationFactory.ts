@@ -30,7 +30,7 @@ export interface ApiImplementationFactory {
 
     //reviews
     getReview(id: string): Promise<Review | undefined>;
-    getReviews(): Promise<Review[] | undefined>;
+    getReviews(restaurantId: string): Promise<Review[] | undefined>;
     createReview(review: Review): Promise<boolean>;
     updateReview(review: UpdateReviewInput): Promise<boolean>;
 }

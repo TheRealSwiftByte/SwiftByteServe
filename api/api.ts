@@ -85,8 +85,8 @@ export class Api implements ApiImplementationFactory {
     public getReview(id: string) {
         return this.factory.getReview(id);
     }
-    public getReviews() {
-        return this.factory.getReviews();
+    public getReviews(restaurantId: string) {
+        return this.factory.getReviews(restaurantId);
     }
     public createReview(review: Review) {
         return this.factory.createReview(review);

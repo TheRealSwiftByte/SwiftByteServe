@@ -6,7 +6,7 @@ import {
   Text,
   View,
 } from "react-native";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useContext, useState } from "react";
 import { Button, TextInput } from "@swift-byte/switftbytecomponents";
 import { Link, router, useFocusEffect } from "expo-router";
 import User from "../../assets/images/user.svg";
@@ -16,15 +16,18 @@ import { AirbnbRating } from "react-native-ratings";
 import { reviews } from "@/mock_data";
 import { Review as ReviewInterface } from "@/api/schema/SwiftByteTypes";
 import { Api } from "@/api/api";
+import { RestaurantContext } from "@/context/RestaurantContext";
 
 const Review = () => {
   const [reviewList, setReviewList] = useState<ReviewInterface[]>();
+  const { details } = useContext(RestaurantContext);
   useFocusEffect(
     useCallback(() => {
       try {
         Api.getApi()
-          .getReviews()
+          .getReviews(details.id)
           .then((res) => {
+            console.log('restaurant', res)
             if (res) {
               setReviewList(res);
             } else {

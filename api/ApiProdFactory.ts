@@ -214,13 +214,13 @@ export class ApiProdFactory implements ApiImplementationFactory {
         }
     };
 
-    async getReviews(): Promise<Review[] | undefined>{
-        try {
-            throw new Error("Method not implemented.")
-        } catch (error) {
-            console.error("Failed to get reviews: " + error);
-            return undefined;
-        }
+    async getReviews(restaurantId: string): Promise<Review[] | undefined> {
+        const response = fetch(API_BASE_URL + "review/fetch/?id=" + restaurantId).then(response => response.json())
+        .then(data => {
+            console.log("Data returned in request to createCustomer: " + JSON.stringify(data));
+            return data as Review[];
+        });
+        return response;
     }
 
     async createReview(review: Review): Promise<boolean>{

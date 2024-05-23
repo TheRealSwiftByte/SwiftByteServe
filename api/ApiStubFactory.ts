@@ -98,7 +98,7 @@ export class ApiStubFactory implements ApiImplementationFactory {
         }
         return Promise.reject("Review not found");
     }
-    getReviews(): Promise<Review[]> {
+    getReviews(restaurantId: string): Promise<Review[]> {
         return Promise.resolve(this.reviews);
     }
     createReview(review: Review): Promise<Review> {
