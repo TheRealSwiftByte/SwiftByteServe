@@ -49,7 +49,7 @@ export class ApiProdFactory implements ApiImplementationFactory {
         return undefined;
     }
     async signInRestaurant(email: string, password: string): Promise<Restaurant> {
-        const restaurant = await fetch(API_BASE_URL + "restaurant/SignIn?email=" + email + "&password=" + password)
+        const restaurant = await fetch(API_BASE_URL + "restaurant/SignIn/?email=" + email + "&password=" + password)
             .then(response => response.json())
             .then(data => {
                 console.log("Data returned in request to signInRestaurant: " + JSON.stringify(data));
@@ -114,9 +114,9 @@ export class ApiProdFactory implements ApiImplementationFactory {
     };
     async updateOrder(order: UpdateOrderInput): Promise<boolean>{
         try {
-            const result = await fetch(API_BASE_URL + "order/id?=" + order.id, {
+            const result = await fetch(API_BASE_URL + "order/?id=" + order.id, {
                 method: 'PUT',
-                body: JSON.stringify(order),
+                body: JSON.stringify({orderStatus: order.orderStatus}),
                 headers: {
                     'Content-Type': 'application/json'
                 }
