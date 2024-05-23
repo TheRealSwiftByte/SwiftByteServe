@@ -33,6 +33,14 @@ export class ApiStubFactory implements ApiImplementationFactory {
         this.Restaurants.push(Restaurant);
         return Promise.resolve(Restaurant);
     }
+    updateRestaurant(restaurant: Restaurant): Promise<Restaurant> {
+        const index = this.Restaurants.findIndex(c => c.id === restaurant.id);
+        if (index !== -1) {
+            this.Restaurants[index] = restaurant;
+            return Promise.resolve(restaurant);
+        }
+        return Promise.reject("Restaurant not found");
+    }
 
     //orders
     getOrder(id: string): Promise<Order> {
@@ -90,7 +98,7 @@ export class ApiStubFactory implements ApiImplementationFactory {
         }
         return Promise.reject("Review not found");
     }
-    getReviews(): Promise<Review[]> {
+    getReviews(restaurantId: string): Promise<Review[]> {
         return Promise.resolve(this.reviews);
     }
     createReview(review: Review): Promise<Review> {

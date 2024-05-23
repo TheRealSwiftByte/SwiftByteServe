@@ -2,7 +2,7 @@ import { ApiImplementationFactory } from "./ApiImplementationFactory";
 import { Api } from "./api.ts";
 import { CreateCustomerInput } from "./schema/Customer.ts";
 import { UpdateOrderInput } from "./schema/Order.ts";
-import { CreateRestaurantInput } from "./schema/Restaurant.ts";
+import { CreateRestaurantInput, UpdateRestaurantInput } from "./schema/Restaurant.ts";
 import {Restaurant, Order, Customer, Review} from "./schema/SwiftByteTypes.ts";
 
 
@@ -75,6 +75,38 @@ export class ApiProdFactory implements ApiImplementationFactory {
         });
         return response;
     };
+
+    async updateRestaurant(restaurant: Restaurant): Promise<Restaurant | undefined>{
+        const val:UpdateRestaurantInput = {
+            name: restaurant.name,
+            categories: restaurant.categories?? [],
+            address: restaurant.address?? '',
+            phone: restaurant.phone,
+            averageRating: restaurant.averageRating?? 0,
+            averageWaitTime: restaurant.averageWaitTime?? 0,
+            description: restaurant.description?? '',
+            imageURI: restaurant.imageURI
+        }
+        console.log('val', val);
+        try {
+            const response = fetch(API_BASE_URL + "restaurant/?id=" + Api.getApi().getActiveRestaurant()?.id, {
+                method: 'PUT',
+                body: JSON.stringify(val),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => response.json()).then(() =>{
+                Api.getApi().setActiveRestaurant({
+                    ...Api.getApi().getActiveRestaurant(),
+                    ...restaurant
+                })
+            })
+        } catch (error) {
+            console.log(typeof error)
+            console.error("Failed to update restaurant: " + error);
+            return undefined;
+        }
+    }
 
     //orders
     async getOrder(id: string): Promise<Order | undefined>{
@@ -182,13 +214,13 @@ export class ApiProdFactory implements ApiImplementationFactory {
         }
     };
 
-    async getReviews(): Promise<Review[] | undefined>{
-        try {
-            throw new Error("Method not implemented.")
-        } catch (error) {
-            console.error("Failed to get reviews: " + error);
-            return undefined;
-        }
+    async getReviews(restaurantId: string): Promise<Review[] | undefined> {
+        const response = fetch(API_BASE_URL + "review/fetch/?id=" + restaurantId).then(response => response.json())
+        .then(data => {
+            console.log("Data returned in request to createCustomer: " + JSON.stringify(data));
+            return data as Review[];
+        });
+        return response;
     }
 
     async createReview(review: Review): Promise<boolean>{

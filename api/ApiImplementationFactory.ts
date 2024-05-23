@@ -12,6 +12,7 @@ export interface ApiImplementationFactory {
     createRestaurant(Restaurant: UpdateRestaurantInput): Promise<Restaurant>;
     signInRestaurant(email: string, password: string): Promise<Restaurant>;
     getActiveRestaurant(): Restaurant | undefined;
+    updateRestaurant(restaurant: Restaurant): Promise<Restaurant | undefined>;
     
 
     //orders
@@ -29,7 +30,7 @@ export interface ApiImplementationFactory {
 
     //reviews
     getReview(id: string): Promise<Review | undefined>;
-    getReviews(): Promise<Review[] | undefined>;
+    getReviews(restaurantId: string): Promise<Review[] | undefined>;
     createReview(review: Review): Promise<boolean>;
     updateReview(review: UpdateReviewInput): Promise<boolean>;
 }

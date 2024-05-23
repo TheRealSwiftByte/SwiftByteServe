@@ -6,17 +6,40 @@ import {
   Text,
   View,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useCallback, useContext, useState } from "react";
 import { Button, TextInput } from "@swift-byte/switftbytecomponents";
-import { Link, router } from "expo-router";
+import { Link, router, useFocusEffect } from "expo-router";
 import User from "../../assets/images/user.svg";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { SB_COLOR_SCHEME } from "@/contstants";
 import { AirbnbRating } from "react-native-ratings";
 import { reviews } from "@/mock_data";
 import { Review as ReviewInterface } from "@/api/schema/SwiftByteTypes";
+import { Api } from "@/api/api";
+import { RestaurantContext } from "@/context/RestaurantContext";
 
 const Review = () => {
+  const [reviewList, setReviewList] = useState<ReviewInterface[]>();
+  const { details } = useContext(RestaurantContext);
+  useFocusEffect(
+    useCallback(() => {
+      try {
+        Api.getApi()
+          .getReviews(details.id)
+          .then((res) => {
+            console.log('restaurant', res)
+            if (res) {
+              setReviewList(res);
+            } else {
+              setReviewList([]);
+            }
+          });
+      } catch (err) {
+        console.log(err);
+      }
+    }, [])
+  );
+
   const renderItem = (item: ReviewInterface) => {
     return (
       <View
@@ -104,10 +127,15 @@ const Review = () => {
       <View style={styles.container}>
         <Text style={[styles.title]}>Reviews</Text>
         <FlatList
-          data={reviews}
+          data={reviewList}
           renderItem={({ item }) => renderItem(item)}
-          keyExtractor={(item) => item.id.toString()}
+          keyExtractor={(item) => item?.id?.toString()}
         />
+        {reviewList?.length == 0 ? (
+          <Text style={{ marginTop: 30 }}>You have no reviews.</Text>
+        ) : (
+          <></>
+        )}
       </View>
     </ScrollView>
   );

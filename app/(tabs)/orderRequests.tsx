@@ -21,20 +21,29 @@ import { Order } from "@/api/schema/SwiftByteTypes";
 export default function OrderRequests() {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("req");
-  const [restaurant, setRestaurant] = useState(Api.getApi().getActiveRestaurant());
+  const [restaurant, setRestaurant] = useState(
+    Api.getApi().getActiveRestaurant()
+  );
   const [items, setItems] = useState([
     { label: "On Going", value: "ord" },
     { label: "Requests", value: "req" },
   ]);
   const [orderList, setOrderList] = useState<Order[]>();
-  const [order, setOrder] = useState<Order | undefined>();
 
-  useFocusEffect(useCallback(()=>{
-    setRestaurant(Api.getApi().getActiveRestaurant());
-    Api.getApi().getOrdersByRestaurantId(restaurant.id).then((res) => {
-      setOrderList(res);
-    });
-  }, []));
+  useFocusEffect(
+    useCallback(() => {
+      try {
+        setRestaurant(Api.getApi().getActiveRestaurant());
+        Api.getApi()
+          .getOrdersByRestaurantId(restaurant.id)
+          .then((res) => {
+            setOrderList(res);
+          });
+      } catch (err) {
+        console.log(err);
+      }
+    }, [])
+  );
   /* const { id } = useLocalSearchParams<{id: string}>();
     const [order, setOrder] = useState<Order | undefined>();
     const [items, setItems] = useState<{ item: MenuItem | undefined; count: number }[]>([]);
@@ -78,26 +87,43 @@ export default function OrderRequests() {
 
   const handleAcceptOrder = (id: string) => {
     console.log("handleAcceptOrder: ", id)
-    Api.getApi().updateOrder({
-      id: id,
-      orderStatus: "accepted",
-    }).then(() => {
-      Api.getApi().getOrdersByRestaurantId(restaurant.id).then((res) => {
-        setOrderList(res);
-      });
-    });
+    try {
+      Api.getApi()
+        .updateOrder({
+          id: id,
+          orderStatus: "accepted",
+        })
+        .then(() => {
+          Api.getApi()
+            .getOrdersByRestaurantId(restaurant.id)
+            .then((res) => {
+              setOrderList(res);
+            });
+        });
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const handleRejectOrder = (id: string) => {
-    Api.getApi().updateOrder({
-      id: id,
-      orderStatus: "declined",
-    }).then(() => {
-      Api.getApi().getOrdersByRestaurantId(restaurant.id).then((res) => {
-        setOrderList(res);
-      });
-    });
+    try {
+      Api.getApi()
+        .updateOrder({
+          id: id,
+          orderStatus: "declined",
+        })
+        .then(() => {
+          Api.getApi()
+            .getOrdersByRestaurantId(restaurant.id)
+            .then((res) => {
+              setOrderList(res);
+            });
+        });
+    } catch (err) {
+      console.log(err);
+    }
   };
+  
   const getStatusColor = (status: string) => {
     switch (status) {
       case "pending":
@@ -271,12 +297,13 @@ export default function OrderRequests() {
         ) : (
           <Text>You have no order requests.</Text>
         )
-      ) : 
-      orderList && orderList.filter((item) => item.orderStatus == "accepted").length > 0 ? (
+      ) : orderList &&
+        orderList.filter((item) => item.orderStatus == "accepted").length >
+          0 ? (
         <FlatList
           data={orderList.filter((item) => item.orderStatus == "accepted")}
           renderItem={({ item }) => renderItem(item)}
-          keyExtractor={(item) => item.id.toString()}
+          keyExtractor={(item) => item?.id?.toString()}
           ItemSeparatorComponent={() => (
             <View
               style={{

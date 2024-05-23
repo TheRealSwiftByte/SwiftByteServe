@@ -1,6 +1,6 @@
 // RestaurantProfilePage.js
 
-import { FoodCategory, RestaurantContext } from "@/context/RestaurantContext";
+import { RestaurantContext } from "@/context/RestaurantContext";
 import React, { useContext, useEffect, useState } from "react";
 import { View, Text, Pressable, StyleSheet, ScrollView } from "react-native";
 import { Avatar } from "react-native-elements";
@@ -11,39 +11,52 @@ import { router } from "expo-router";
 import Plus from "../assets/icons/plus.svg";
 import Close from "../assets/icons/close-outline.svg";
 import { categories_data } from "@/mock_data";
+import { FoodCategory } from "@/api/schema/Restaurant";
+import { Api } from "@/api/api";
 
 const MyProfile = () => {
   const { details, editDetail } = useContext(RestaurantContext);
-  const [image, setImage] = useState<string>('');
+  const [image, setImage] = useState<string>("");
 
   const [name, setName] = useState<string>("");
   const [address, setAddress] = useState<string>("");
   const [phone, setPhone] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [categories, setCategories] = useState<FoodCategory[]>([]);
+  const foodCategoriesArray: string[] = Object.values(FoodCategory);
 
   function getInitial(): string {
-    const temp = details.name.split(" ");
-    if (temp.length > 1) {
-      return `${temp[0].charAt(0).toUpperCase()}${temp[1]
-        .charAt(0)
-        .toUpperCase()}`;
-    } else {
-      return `${temp[0].charAt(0).toUpperCase()}`;
+    const temp = details.name?.split(" ");
+    if (temp) {
+      if (temp.length > 1) {
+        return `${temp[0].charAt(0).toUpperCase()}${temp[1]
+          .charAt(0)
+          .toUpperCase()}`;
+      } else {
+        return `${temp[0].charAt(0).toUpperCase()}`;
+      }
     }
+    return "";
   }
 
   const handleSubmit = () => {
+    const images = [
+      "https://images.pexels.com/photos/1267320/pexels-photo-1267320.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+      "https://images.pexels.com/photos/1058277/pexels-photo-1058277.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+      "https://images.pexels.com/photos/262047/pexels-photo-262047.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+      "https://images.pexels.com/photos/761854/pexels-photo-761854.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+    ];
+
     console.log(name, phone, address, description);
     if (!(name && phone && address && description)) {
       return;
     }
 
-    console.log('categories', categories)
+    console.log("categories", categories);
 
     try {
-      editDetail({
-        _id: details._id,
+      const updated = {
+        id: details.id,
         name,
         description,
         phone,
@@ -51,22 +64,62 @@ const MyProfile = () => {
         categories,
         averageRating: details.averageRating,
         averageWaitTime: details.averageWaitTime,
-        imageUrl: image
-      });
+        imageURI: image,
+        menu: details.menu,
+        email: details.email,
+        password: details.password,
+      };
+      // const response = Api.getApi().updateRestaurant(updated);
+      console.log("update response", updated);
+      editDetail(updated);
     } catch (err) {
       console.log(err);
+      return;
     }
 
     router.navigate("/profile");
   };
 
+  function getEnumKeyByValue(enumObj: any, value: string): string | undefined {
+    return Object.keys(enumObj).find((key) => enumObj[key] === value);
+  }
+
   useEffect(() => {
+    async function fetch() {
+      try {
+        const restaurant = await Api.getApi().getRestaurant(
+          Api.getApi().getActiveRestaurant().id
+        );
+        if (restaurant) {
+          console.log(restaurant);
+          setName(restaurant.name);
+          setAddress(restaurant.address);
+          setPhone(restaurant.phone);
+          setDescription(restaurant.description);
+          setCategories(restaurant.categories);
+          setImage(restaurant?.imageURI as string);
+        } else {
+          console.log(restaurant);
+          setName(details.name);
+          setAddress(details.address);
+          setPhone(details.phone);
+          setDescription(details.description);
+          setCategories(details.categories);
+          setImage(details?.imageURI as string);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    }
+
+    // fetch();
+    console.log(details);
     setName(details.name);
     setAddress(details.address);
     setPhone(details.phone);
     setDescription(details.description);
     setCategories(details.categories);
-    setImage(details.imageUrl);
+    setImage(details?.imageURI as string);
   }, []);
 
   const pickImage = async () => {
@@ -155,26 +208,27 @@ const MyProfile = () => {
           <View style={styles.details}>
             <Text style={[styles.label, { marginBottom: 10 }]}>Category</Text>
             <View style={{ flex: 1, flexDirection: "row" }}>
-              {categories.map((cat) => {
+              {categories?.map((cat) => {
                 return (
                   <Pressable
                     onPress={() =>
                       setCategories((prevCat) => {
                         if (prevCat.length > 1) {
-                          return prevCat.filter((i) => i.id != cat.id);
+                          return prevCat.filter((i) => i != cat);
                         } else {
                           return [];
                         }
                       })
                     }
-                    key={cat.id}
+                    key={cat}
                     style={[
                       styles.cat,
                       { backgroundColor: SB_COLOR_SCHEME.SB_PRIMARY },
                     ]}
                   >
                     <Text style={{ color: SB_COLOR_SCHEME.SB_SECONDARY }}>
-                      {cat.name}
+                      {cat.charAt(0).toUpperCase()}
+                      {cat.substring(1).toLowerCase()}
                     </Text>
                     <Close height={20} width={20} />
                   </Pressable>
@@ -184,9 +238,11 @@ const MyProfile = () => {
 
             <View style={styles.separator}></View>
             <ScrollView horizontal>
-              {categories_data
+              {foodCategoriesArray
                 .filter((i) => {
-                  if (categories.find((a) => a.id == i.id)) {
+                  if (
+                    categories?.find((a) => a.toLowerCase() == i.toLowerCase())
+                  ) {
                     return false;
                   } else {
                     return true;
@@ -195,14 +251,18 @@ const MyProfile = () => {
                 .map((cat) => {
                   return (
                     <Pressable
-                      key={cat.id}
+                      key={cat}
                       style={styles.cat}
                       onPress={() =>
-                        setCategories((prevCat) => [...prevCat, cat])
+                        setCategories((prevCat) => [
+                          ...prevCat,
+                          getEnumKeyByValue(FoodCategory, cat) as FoodCategory,
+                        ])
                       }
                     >
                       <Text style={{ color: SB_COLOR_SCHEME.SB_PRIMARY }}>
-                        {cat.name}
+                        {cat.charAt(0).toUpperCase()}
+                        {cat.substring(1)}
                       </Text>
                       <Plus height={20} width={20} />
                     </Pressable>

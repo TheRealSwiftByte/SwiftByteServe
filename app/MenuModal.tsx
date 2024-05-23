@@ -4,9 +4,11 @@ import { SB_COLOR_SCHEME } from "@/contstants";
 import { Button } from "@swift-byte/switftbytecomponents";
 import { Avatar } from "react-native-elements";
 import * as ImagePicker from "expo-image-picker";
-import { MenuItem, RestaurantContext } from "@/context/RestaurantContext";
+import { RestaurantContext } from "@/context/RestaurantContext";
 import uuid from "react-native-uuid";
 import { router, useLocalSearchParams } from "expo-router";
+import { MenuItemType } from "@/api/schema/MenuItem";
+import DropDownPicker from "react-native-dropdown-picker";
 
 export default function MenuModal() {
   const { menuItemId } = useLocalSearchParams<{ menuItemId: string }>();
@@ -15,16 +17,42 @@ export default function MenuModal() {
   const [name, setName] = useState<string>("");
   const [price, setPrice] = useState<number>(0);
   const [description, setDescription] = useState<string>("");
+  const [isAvailable, setIsAvailable] = useState<boolean>(true);
+  const [category, setCategory] = useState<MenuItemType>(MenuItemType.MAIN);
+
+  const [open, setOpen] = useState(false);
+  const [openAvailable, setOpenAvailable] = useState(false);
+  const [items, setItems] = useState([
+    { label: "Last 3 months", value: "3months" },
+    { label: "Last 6 months", value: "6months" },
+  ]);
+
+  const [isAvailableItem, setIsAvailableItem] = useState([
+    { label: "Yes", value: true },
+    { label: "No", value: false },
+  ]);
+
+  const generateLabelValuePairs = (enumObj: any) => {
+    return Object.values(enumObj).map((value) => ({
+      //@ts-ignore
+      label: (value.charAt(0).toUpperCase() + value.slice(1)) as string,
+      value: value as MenuItemType,
+    }));
+  };
 
   useEffect(() => {
+    console.log('menu', menu, menuItemId)
+    setItems(generateLabelValuePairs(MenuItemType));
     if (menuItemId) {
       console.log("edit!");
-      const item = menu.find((i) => i.id == menuItemId);
+      const item = menu.find((i) => i.name == menuItemId);
       if (item) {
-        setImage(item?.imageUrl);
+        setImage(item?.imagePath);
         setName(item?.name);
         setDescription(item?.description);
         setPrice(item?.price);
+        setIsAvailable(item?.isAvailable);
+        setCategory(item?.category as MenuItemType);
       }
     }
   }, []);
@@ -44,13 +72,16 @@ export default function MenuModal() {
   };
 
   const handleSubmit = () => {
+    console.log(category);
     if (menuItemId) {
       editMenu(menuItemId, {
         id: menuItemId,
+        category,
         name,
         price,
         description,
-        imageUrl: image,
+        imagePath: image,
+        isAvailable: isAvailable,
       });
       router.navigate("/MyMenu");
     } else {
@@ -60,7 +91,9 @@ export default function MenuModal() {
           name,
           price,
           description,
-          imageUrl: image,
+          category,
+          imagePath: image,
+          isAvailable: isAvailable,
         });
         router.navigate("/MyMenu");
       }
@@ -96,6 +129,17 @@ export default function MenuModal() {
           </Text>
         </View>
         <View style={styles.card}>
+          <Text style={styles.label}>Is this menu available?</Text>
+          <DropDownPicker
+            open={openAvailable}
+            value={isAvailable}
+            items={isAvailableItem}
+            containerStyle={{ width: 200, marginBottom: 20 }}
+            dropDownContainerStyle={{ zIndex: 1 }}
+            setOpen={setOpenAvailable}
+            setValue={setIsAvailable}
+            setItems={setIsAvailableItem}
+          />
           <Text style={styles.label}>Name</Text>
           <TextInput
             style={styles.input}
@@ -111,6 +155,18 @@ export default function MenuModal() {
             onChangeText={setDescription}
             maxLength={255}
           />
+          <Text style={styles.label}>Category</Text>
+          <DropDownPicker
+            open={open}
+            value={category}
+            items={items}
+            containerStyle={{ width: 200, marginBottom: 20 }}
+            dropDownContainerStyle={{ zIndex: 2 }}
+            setOpen={setOpen}
+            setValue={setCategory}
+            setItems={setItems}
+          />
+
           <Text style={styles.label}>Price</Text>
           <TextInput
             style={styles.input}

@@ -1,11 +1,8 @@
 import { ScrollView, StyleSheet } from "react-native";
 import { Text, View } from "@/components/Themed";
-
 import {
-  BarChart,
   LineChart,
   PieChart,
-  ProgressChart,
 } from "react-native-chart-kit";
 import { Dimensions } from "react-native";
 import { SB_COLOR_SCHEME } from "@/contstants";
@@ -13,7 +10,6 @@ import { useContext, useEffect, useState } from "react";
 import { RestaurantContext } from "@/context/RestaurantContext";
 import { Button } from "@swift-byte/switftbytecomponents";
 import DropDownPicker from "react-native-dropdown-picker";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function index() {
   const [open, setOpen] = useState(false);
@@ -83,7 +79,7 @@ export default function index() {
       "black",
       SB_COLOR_SCHEME.SB_PRIMARY_LIGHT,
     ];
-    if (menu.length > 0) {
+    if (menu?.length > 0) {
       // max 5
       const tmp = menu.slice(0, 5).map((item, i) => {
         return {
@@ -210,7 +206,7 @@ export default function index() {
             <Text style={[styles.title, { marginTop: 20 }]}>Export Report</Text>
             <Text style={{ marginVertical: 20 }}>
               Export your revenue report for better future prediction and
-              decition making.
+              decision making.
             </Text>
             <Button
               text={"Export"}

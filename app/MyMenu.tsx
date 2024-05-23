@@ -8,9 +8,11 @@ import {
 } from "react-native";
 import React, { useContext } from "react";
 import { router } from "expo-router";
-import { MenuItem, RestaurantContext } from "@/context/RestaurantContext";
+import { RestaurantContext } from "@/context/RestaurantContext";
 import { SB_COLOR_SCHEME } from "@/contstants";
 import IconTrash from "../assets/icons/trash-outline.svg";
+import { MenuItem } from "@/api/schema/MenuItem";
+import { Button } from "@swift-byte/switftbytecomponents";
 
 export default function MyMenu() {
   const { menu, addToMenu, removeFromMenu } = useContext(RestaurantContext);
@@ -35,14 +37,14 @@ export default function MyMenu() {
             router.navigate({
               pathname: "MenuModal",
               params: {
-                menuItemId: item.id.toString(),
+                menuItemId: item?.name,
               },
             })
           }
         >
           <View>
             <Image
-              source={{ uri: item.imageUrl }}
+              source={{ uri: item.imagePath }}
               style={{
                 width: 70,
                 height: 70,
@@ -68,12 +70,33 @@ export default function MyMenu() {
           </View>
         </Pressable>
 
-        <Pressable style={{ marginRight: 20 }} onPress={() => removeFromMenu(item)}>
-          <IconTrash
-            width={24}
-            height={24}
-            
+        <Pressable
+          style={{
+            marginRight: 20,
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 10,
+            justifyContent: "flex-end",
+          }}
+          onPress={() => removeFromMenu(item)}
+        >
+          <Button
+            size="small"
+            text={item.isAvailable ? "Available" : "Not Available"}
+            buttonStyle={[
+              {
+                width: 250,
+                backgroundColor: item.isAvailable
+                  ? SB_COLOR_SCHEME.SB_SECONDARY
+                  : SB_COLOR_SCHEME.SB_WARNING,
+              },
+            ]}
+            textStyle={{ textAlign: "center" }}
+            type={"secondary"}
+            onPress={() => {}}
           />
+          <IconTrash width={24} height={24} />
         </Pressable>
       </View>
     );
@@ -89,7 +112,7 @@ export default function MyMenu() {
       <FlatList
         data={menu}
         renderItem={({ item }) => renderItem(item)}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item) => item?.name?.toString()}
         ItemSeparatorComponent={() => (
           <View
             style={{

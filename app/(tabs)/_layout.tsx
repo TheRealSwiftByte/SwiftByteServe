@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useCallback, useState } from "react";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { Link, Tabs } from "expo-router";
+import { Link, Tabs, useFocusEffect } from "expo-router";
 import { Pressable } from "react-native";
 
 import Colors from "@/constants/Colors";
@@ -14,6 +14,8 @@ import HistoryIcon from "../../assets/icons/receipt-outline.svg";
 import { SB_COLOR_SCHEME } from "@/contstants";
 import { RestaurantContextProvider } from "@/context/RestaurantContext";
 import { orders } from "@/mock_data";
+import { Api } from "@/api/api";
+import { Order } from "@/api/schema/Order";
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarIcon(props: {
@@ -25,6 +27,21 @@ function TabBarIcon(props: {
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+  const [order, setOrder] = useState<Order[]>();
+
+  useFocusEffect(
+    useCallback(() => {
+      try {
+        Api.getApi()
+          .getOrdersByRestaurantId(Api.getApi().getActiveRestaurant().id)
+          .then((res) => {
+            setOrder(res);
+          });
+      } catch (err) {
+        console.log(err);
+      }
+    }, [])
+  );
 
   return (
     <Tabs
@@ -48,7 +65,7 @@ export default function TabLayout() {
         options={{
           title: "Orders",
           tabBarIcon: () => <IconOrders />,
-          tabBarBadge: orders.length // change to request here
+          tabBarBadge: order?.filter(i => i.orderStatus == 'pending')?.length,
         }}
       />
       <Tabs.Screen
