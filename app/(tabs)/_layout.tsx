@@ -65,7 +65,7 @@ export default function TabLayout() {
         options={{
           title: "Orders",
           tabBarIcon: () => <IconOrders />,
-          tabBarBadge: order?.length,
+          tabBarBadge: order?.filter(i => i.orderStatus == 'pending')?.length,
         }}
       />
       <Tabs.Screen
